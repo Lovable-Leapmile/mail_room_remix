@@ -116,26 +116,35 @@ function NewDropPage() {
     triggerRefresh();
 
     // Look up the freshly created reservation to get the assigned door.
+    // Keep polling until the backend has allotted a door_number — the
+    // hardware (robot tray retrieve / locker open) needs it.
     let rec: any = null;
-    for (let attempt = 0; attempt < 4 && !rec; attempt++) {
+    for (let attempt = 0; attempt < 10; attempt++) {
       try {
         const lookup = await fetch(
           `${PODCORE_BASE}/reservations/?reservation_awbno=${encodeURIComponent(awb)}&status=active&reservation_status=DropPending&dropby_phone=${encodeURIComponent(courierPhone)}&order_by_field=updated_at&order_by_type=DESC`,
           { headers: apiHeaders },
         );
         const d = await lookup.json();
-        rec = Array.isArray(d?.records) ? d.records[0] : Array.isArray(d) ? d[0] : null;
+        const found = Array.isArray(d?.records) ? d.records[0] : Array.isArray(d) ? d[0] : null;
+        if (found) rec = found;
+        if (found?.door_number != null) break;
       } catch {
         // Retry below.
       }
-      if (!rec) await new Promise((r) => setTimeout(r, 1000));
+      await new Promise((r) => setTimeout(r, 1000));
     }
     setSubmitting(false);
+
+    if (rec?.door_number == null) {
+      toast.error("Could not get the allotted door for this reservation.");
+      return;
+    }
     toast.success("Reservation created");
 
     setTarget({
-      podId: rec?.pod_id ?? pod.pod_id,
-      doorNumber: rec?.door_number,
+      podId: rec.pod_id ?? pod.pod_id,
+      doorNumber: rec.door_number,
       isRobot: rec?.pod_name ? /robot/i.test(String(rec.pod_name)) : pod.isRobot,
     });
     setStep("drop");
