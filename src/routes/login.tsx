@@ -102,12 +102,6 @@ function LoginPage() {
         >
           Welcome Back
         </h1>
-        <p
-          className="mt-2 text-base font-medium max-w-[80%]"
-          style={{ color: "#666680", lineHeight: 1.5 }}
-        >
-          Sign in to continue to your Leapmile Digital Mailroom account.
-        </p>
 
         <form onSubmit={submit} className="mt-8 flex flex-col">
           {/* Mobile number */}
@@ -144,15 +138,9 @@ function LoginPage() {
                     : "0 1px 2px rgba(31, 31, 58, 0.03)",
               }}
             />
-            {trimmedReg.length === 10 && (
+            {trimmedReg.length === 10 && detecting && (
               <p className="text-[12px] mt-2 ml-1">
-                {detecting ? (
-                  <span style={{ color: "#666680" }}>Checking…</span>
-                ) : detected ? (
-                  <span style={{ color: "#351C75", fontWeight: 500 }}>
-                    Detected as {detected === "courier" ? "Courier" : "Employee"}
-                  </span>
-                ) : null}
+                <span style={{ color: "#666680" }}>Checking…</span>
               </p>
             )}
           </div>
