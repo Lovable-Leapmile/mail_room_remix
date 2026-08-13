@@ -134,7 +134,7 @@ function LocationCard({ parcel }: { parcel: DropParcel }) {
   );
 }
 
-type JourneyStep = { key: string; title: string; short: string };
+type JourneyStep = { key: string; title: string; short: string; hidden?: boolean };
 
 function DropJourney({
   isRobot,
@@ -155,7 +155,7 @@ function DropJourney({
         ? [
             { key: "goto", title: "Go to Cube Robot", short: "Locate" },
             { key: "scan", title: "Scan Cube Robot QR", short: "Scan" },
-            { key: "retrieving", title: "Retrieving drop tray", short: "Retrieve" },
+            { key: "retrieving", title: "Retrieving drop tray", short: "Retrieve", hidden: true },
             { key: "open", title: "Door open — drop the parcel", short: "Drop" },
             { key: "done", title: "Dropped", short: "Done" },
           ]
@@ -382,6 +382,7 @@ function DropJourney({
 
       <div ref={stripRef} className="flex items-center gap-1 overflow-x-auto hide-scrollbar pb-1">
         {steps.map((s, i) => {
+          if (s.hidden) return null;
           const done = i < idx;
           const active = i === idx;
           return (
