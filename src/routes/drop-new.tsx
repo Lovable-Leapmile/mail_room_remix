@@ -29,7 +29,7 @@ export const Route = createFileRoute("/drop-new")({
   component: NewDropPage,
 });
 
-type Step = "locate" | "scan" | "reserve";
+type Step = "locate" | "scan" | "reserve" | "drop" | "done";
 
 type ScannedPod = { pod_id: number; pod_name: string; isRobot: boolean };
 
@@ -37,6 +37,8 @@ const STEPS: { key: Step; short: string }[] = [
   { key: "locate", short: "Locate" },
   { key: "scan", short: "Scan" },
   { key: "reserve", short: "Reserve" },
+  { key: "drop", short: "Drop" },
+  { key: "done", short: "Done" },
 ];
 
 function NewDropPage() {
@@ -99,18 +101,13 @@ function NewDropPage() {
       return;
     }
     setSubmitting(true);
-    const res = await createReservationApi({
+    await createReservationApi({
       courierPhone,
       pickupPhone: picked.user_phone,
       awb,
       reservationType: resType,
       podId: String(pod.pod_id),
     });
-    if (!res.ok) {
-      setSubmitting(false);
-      toast.error(res.message || "Could not create reservation");
-      return;
-    }
     createReservation({ awb, receiverName: picked.user_name, receiverPhone: picked.user_phone, courier: courierCompany });
     triggerRefresh();
 
