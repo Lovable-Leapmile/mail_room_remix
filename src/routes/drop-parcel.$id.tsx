@@ -134,7 +134,7 @@ function LocationCard({ parcel }: { parcel: DropParcel }) {
   );
 }
 
-type JourneyStep = { key: string; title: string; short: string };
+type JourneyStep = { key: string; title: string; short: string; hidden?: boolean };
 
 function DropJourney({
   isRobot,
@@ -155,7 +155,7 @@ function DropJourney({
         ? [
             { key: "goto", title: "Go to Cube Robot", short: "Locate" },
             { key: "scan", title: "Scan Cube Robot QR", short: "Scan" },
-            { key: "retrieving", title: "Retrieving drop tray", short: "Retrieve" },
+            { key: "retrieving", title: "Retrieving drop tray", short: "Retrieve", hidden: true },
             { key: "open", title: "Door open — drop the parcel", short: "Drop" },
             { key: "done", title: "Dropped", short: "Done" },
           ]
@@ -381,9 +381,12 @@ function DropJourney({
       </p>
 
       <div ref={stripRef} className="flex items-center gap-1 overflow-x-auto hide-scrollbar pb-1">
-        {steps.map((s, i) => {
+        {steps
+          .map((s, i) => ({ s, i }))
+          .filter((x) => !x.s.hidden)
+          .map(({ s, i }, n, arr) => {
           const done = i < idx;
-          const active = i === idx;
+          const active = i === idx || (s.key === "open" && steps[idx]?.key === "retrieving");
           return (
             <div key={s.key} data-step={i} className="flex items-center gap-1 shrink-0">
               <div
@@ -402,11 +405,11 @@ function DropJourney({
                     !done && !active && "bg-white text-muted-foreground",
                   )}
                 >
-                  {done ? <Check className="w-3 h-3" /> : i + 1}
+                  {done ? <Check className="w-3 h-3" /> : n + 1}
                 </div>
                 <span className="text-[11px] font-semibold whitespace-nowrap">{s.short}</span>
               </div>
-              {i < steps.length - 1 && <div className={cn("w-3 h-px", done ? "bg-green-400" : "bg-border")} />}
+              {n < arr.length - 1 && <div className={cn("w-3 h-px", done ? "bg-green-400" : "bg-border")} />}
             </div>
           );
         })}
