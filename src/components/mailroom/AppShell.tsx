@@ -8,7 +8,6 @@ import { useMailroom, markAllRead, formatWhen } from "@/lib/mailroom";
 import { usePickupNotifications, formatPickupBody } from "@/lib/pickup-notifications";
 import { useUserLocation, formatLocation } from "@/lib/locations";
 import { cn } from "@/lib/utils";
-import { CreateReservationSheet } from "@/components/mailroom/CreateReservationSheet";
 
 function ProfileLocation() {
   const user = useMailroom((s) => s.user);
@@ -243,23 +242,19 @@ function EmployeeBottomBar() {
 }
 
 function CourierBottomBar() {
-  const [openCreate, setOpenCreate] = useState(false);
   return (
-    <>
-      <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 px-4 pb-4">
-        <div className="flex items-stretch p-2 rounded-[28px] bg-white/25 backdrop-blur-2xl border border-white/35 shadow-[0_8px_32px_-12px_rgba(53,28,117,0.18)]">
-          <button
-            onClick={() => setOpenCreate(true)}
-            className="haptic-tap flex-1 rounded-[22px] brand-gradient text-white font-semibold text-sm flex items-center justify-center gap-2 py-3.5 shadow-[0_12px_28px_-10px_rgba(53,28,117,0.5)]"
-            aria-label="Add Parcel to Drop"
-          >
-            <PlusCircle className="w-5 h-5" />
-            Add Parcel to Drop
-          </button>
-        </div>
-      </nav>
-      <CreateReservationSheet open={openCreate} onClose={() => setOpenCreate(false)} />
-    </>
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 px-4 pb-4">
+      <div className="flex items-stretch p-2 rounded-[28px] bg-white/25 backdrop-blur-2xl border border-white/35 shadow-[0_8px_32px_-12px_rgba(53,28,117,0.18)]">
+        <Link
+          to="/drop-new"
+          className="haptic-tap flex-1 rounded-[22px] brand-gradient text-white font-semibold text-sm flex items-center justify-center gap-2 py-3.5 shadow-[0_12px_28px_-10px_rgba(53,28,117,0.5)]"
+          aria-label="Add Parcel to Drop"
+        >
+          <PlusCircle className="w-5 h-5" />
+          Add Parcel to Drop
+        </Link>
+      </div>
+    </nav>
   );
 }
 
