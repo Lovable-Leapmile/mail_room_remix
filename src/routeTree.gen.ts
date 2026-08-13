@@ -21,6 +21,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as IncomingRouteImport } from './routes/incoming'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as HelpRouteImport } from './routes/help'
+import { Route as DropNewRouteImport } from './routes/drop-new'
 import { Route as DropRouteImport } from './routes/drop'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as BookRouteImport } from './routes/book'
@@ -90,6 +91,11 @@ const HelpRoute = HelpRouteImport.update({
   path: '/help',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DropNewRoute = DropNewRouteImport.update({
+  id: '/drop-new',
+  path: '/drop-new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DropRoute = DropRouteImport.update({
   id: '/drop',
   path: '/drop',
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/book': typeof BookRoute
   '/dashboard': typeof DashboardRoute
   '/drop': typeof DropRoute
+  '/drop-new': typeof DropNewRoute
   '/help': typeof HelpRoute
   '/history': typeof HistoryRoute
   '/incoming': typeof IncomingRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/book': typeof BookRoute
   '/dashboard': typeof DashboardRoute
   '/drop': typeof DropRoute
+  '/drop-new': typeof DropNewRoute
   '/help': typeof HelpRoute
   '/history': typeof HistoryRoute
   '/incoming': typeof IncomingRoute
@@ -181,6 +189,7 @@ export interface FileRoutesById {
   '/book': typeof BookRoute
   '/dashboard': typeof DashboardRoute
   '/drop': typeof DropRoute
+  '/drop-new': typeof DropNewRoute
   '/help': typeof HelpRoute
   '/history': typeof HistoryRoute
   '/incoming': typeof IncomingRoute
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/book'
     | '/dashboard'
     | '/drop'
+    | '/drop-new'
     | '/help'
     | '/history'
     | '/incoming'
@@ -227,6 +237,7 @@ export interface FileRouteTypes {
     | '/book'
     | '/dashboard'
     | '/drop'
+    | '/drop-new'
     | '/help'
     | '/history'
     | '/incoming'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/book'
     | '/dashboard'
     | '/drop'
+    | '/drop-new'
     | '/help'
     | '/history'
     | '/incoming'
@@ -272,6 +284,7 @@ export interface RootRouteChildren {
   BookRoute: typeof BookRoute
   DashboardRoute: typeof DashboardRoute
   DropRoute: typeof DropRoute
+  DropNewRoute: typeof DropNewRoute
   HelpRoute: typeof HelpRoute
   HistoryRoute: typeof HistoryRoute
   IncomingRoute: typeof IncomingRoute
@@ -376,6 +389,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HelpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/drop-new': {
+      id: '/drop-new'
+      path: '/drop-new'
+      fullPath: '/drop-new'
+      preLoaderRoute: typeof DropNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/drop': {
       id: '/drop'
       path: '/drop'
@@ -440,6 +460,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookRoute: BookRoute,
   DashboardRoute: DashboardRoute,
   DropRoute: DropRoute,
+  DropNewRoute: DropNewRoute,
   HelpRoute: HelpRoute,
   HistoryRoute: HistoryRoute,
   IncomingRoute: IncomingRoute,
