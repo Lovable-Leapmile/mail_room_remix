@@ -149,7 +149,7 @@ function NewDropPage() {
   }, [nav]);
 
   return (
-    <Page title="Add Parcel to Drop" back hideNav flatHeader>
+    <Page title="Drop Parcel" back hideNav flatHeader>
       {/* Step strip */}
       <div className="mt-2 ios-card p-4">
         <div className="flex items-center gap-1 overflow-x-auto hide-scrollbar pb-1">
