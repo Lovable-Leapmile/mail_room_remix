@@ -9,38 +9,394 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as OutgoingRouteImport } from './routes/outgoing'
+import { Route as OtpRouteImport } from './routes/otp'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as ManifestRouteImport } from './routes/manifest'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as IncomingRouteImport } from './routes/incoming'
+import { Route as HistoryRouteImport } from './routes/history'
+import { Route as HelpRouteImport } from './routes/help'
+import { Route as DropRouteImport } from './routes/drop'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as BookRouteImport } from './routes/book'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ParcelsIndexRouteImport } from './routes/parcels.index'
+import { Route as ParcelsIdRouteImport } from './routes/parcels.$id'
+import { Route as DropParcelIdRouteImport } from './routes/drop-parcel.$id'
+import { Route as ApiPublicRobotRouteImport } from './routes/api/public/robot'
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OutgoingRoute = OutgoingRouteImport.update({
+  id: '/outgoing',
+  path: '/outgoing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OtpRoute = OtpRouteImport.update({
+  id: '/otp',
+  path: '/otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManifestRoute = ManifestRouteImport.update({
+  id: '/manifest',
+  path: '/manifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IncomingRoute = IncomingRouteImport.update({
+  id: '/incoming',
+  path: '/incoming',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DropRoute = DropRouteImport.update({
+  id: '/drop',
+  path: '/drop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookRoute = BookRouteImport.update({
+  id: '/book',
+  path: '/book',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ParcelsIndexRoute = ParcelsIndexRouteImport.update({
+  id: '/parcels/',
+  path: '/parcels/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParcelsIdRoute = ParcelsIdRouteImport.update({
+  id: '/parcels/$id',
+  path: '/parcels/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DropParcelIdRoute = DropParcelIdRouteImport.update({
+  id: '/drop-parcel/$id',
+  path: '/drop-parcel/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicRobotRoute = ApiPublicRobotRouteImport.update({
+  id: '/api/public/robot',
+  path: '/api/public/robot',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/book': typeof BookRoute
+  '/dashboard': typeof DashboardRoute
+  '/drop': typeof DropRoute
+  '/help': typeof HelpRoute
+  '/history': typeof HistoryRoute
+  '/incoming': typeof IncomingRoute
+  '/login': typeof LoginRoute
+  '/manifest': typeof ManifestRoute
+  '/notifications': typeof NotificationsRoute
+  '/otp': typeof OtpRoute
+  '/outgoing': typeof OutgoingRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
+  '/drop-parcel/$id': typeof DropParcelIdRoute
+  '/parcels/$id': typeof ParcelsIdRoute
+  '/parcels/': typeof ParcelsIndexRoute
+  '/api/public/robot': typeof ApiPublicRobotRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/book': typeof BookRoute
+  '/dashboard': typeof DashboardRoute
+  '/drop': typeof DropRoute
+  '/help': typeof HelpRoute
+  '/history': typeof HistoryRoute
+  '/incoming': typeof IncomingRoute
+  '/login': typeof LoginRoute
+  '/manifest': typeof ManifestRoute
+  '/notifications': typeof NotificationsRoute
+  '/otp': typeof OtpRoute
+  '/outgoing': typeof OutgoingRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
+  '/drop-parcel/$id': typeof DropParcelIdRoute
+  '/parcels/$id': typeof ParcelsIdRoute
+  '/parcels': typeof ParcelsIndexRoute
+  '/api/public/robot': typeof ApiPublicRobotRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/book': typeof BookRoute
+  '/dashboard': typeof DashboardRoute
+  '/drop': typeof DropRoute
+  '/help': typeof HelpRoute
+  '/history': typeof HistoryRoute
+  '/incoming': typeof IncomingRoute
+  '/login': typeof LoginRoute
+  '/manifest': typeof ManifestRoute
+  '/notifications': typeof NotificationsRoute
+  '/otp': typeof OtpRoute
+  '/outgoing': typeof OutgoingRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
+  '/drop-parcel/$id': typeof DropParcelIdRoute
+  '/parcels/$id': typeof ParcelsIdRoute
+  '/parcels/': typeof ParcelsIndexRoute
+  '/api/public/robot': typeof ApiPublicRobotRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/book'
+    | '/dashboard'
+    | '/drop'
+    | '/help'
+    | '/history'
+    | '/incoming'
+    | '/login'
+    | '/manifest'
+    | '/notifications'
+    | '/otp'
+    | '/outgoing'
+    | '/profile'
+    | '/register'
+    | '/search'
+    | '/settings'
+    | '/drop-parcel/$id'
+    | '/parcels/$id'
+    | '/parcels/'
+    | '/api/public/robot'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/book'
+    | '/dashboard'
+    | '/drop'
+    | '/help'
+    | '/history'
+    | '/incoming'
+    | '/login'
+    | '/manifest'
+    | '/notifications'
+    | '/otp'
+    | '/outgoing'
+    | '/profile'
+    | '/register'
+    | '/search'
+    | '/settings'
+    | '/drop-parcel/$id'
+    | '/parcels/$id'
+    | '/parcels'
+    | '/api/public/robot'
+  id:
+    | '__root__'
+    | '/'
+    | '/book'
+    | '/dashboard'
+    | '/drop'
+    | '/help'
+    | '/history'
+    | '/incoming'
+    | '/login'
+    | '/manifest'
+    | '/notifications'
+    | '/otp'
+    | '/outgoing'
+    | '/profile'
+    | '/register'
+    | '/search'
+    | '/settings'
+    | '/drop-parcel/$id'
+    | '/parcels/$id'
+    | '/parcels/'
+    | '/api/public/robot'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BookRoute: typeof BookRoute
+  DashboardRoute: typeof DashboardRoute
+  DropRoute: typeof DropRoute
+  HelpRoute: typeof HelpRoute
+  HistoryRoute: typeof HistoryRoute
+  IncomingRoute: typeof IncomingRoute
+  LoginRoute: typeof LoginRoute
+  ManifestRoute: typeof ManifestRoute
+  NotificationsRoute: typeof NotificationsRoute
+  OtpRoute: typeof OtpRoute
+  OutgoingRoute: typeof OutgoingRoute
+  ProfileRoute: typeof ProfileRoute
+  RegisterRoute: typeof RegisterRoute
+  SearchRoute: typeof SearchRoute
+  SettingsRoute: typeof SettingsRoute
+  DropParcelIdRoute: typeof DropParcelIdRoute
+  ParcelsIdRoute: typeof ParcelsIdRoute
+  ParcelsIndexRoute: typeof ParcelsIndexRoute
+  ApiPublicRobotRoute: typeof ApiPublicRobotRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/outgoing': {
+      id: '/outgoing'
+      path: '/outgoing'
+      fullPath: '/outgoing'
+      preLoaderRoute: typeof OutgoingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/otp': {
+      id: '/otp'
+      path: '/otp'
+      fullPath: '/otp'
+      preLoaderRoute: typeof OtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manifest': {
+      id: '/manifest'
+      path: '/manifest'
+      fullPath: '/manifest'
+      preLoaderRoute: typeof ManifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/incoming': {
+      id: '/incoming'
+      path: '/incoming'
+      fullPath: '/incoming'
+      preLoaderRoute: typeof IncomingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/drop': {
+      id: '/drop'
+      path: '/drop'
+      fullPath: '/drop'
+      preLoaderRoute: typeof DropRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book': {
+      id: '/book'
+      path: '/book'
+      fullPath: '/book'
+      preLoaderRoute: typeof BookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +404,58 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/parcels/': {
+      id: '/parcels/'
+      path: '/parcels'
+      fullPath: '/parcels/'
+      preLoaderRoute: typeof ParcelsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parcels/$id': {
+      id: '/parcels/$id'
+      path: '/parcels/$id'
+      fullPath: '/parcels/$id'
+      preLoaderRoute: typeof ParcelsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/drop-parcel/$id': {
+      id: '/drop-parcel/$id'
+      path: '/drop-parcel/$id'
+      fullPath: '/drop-parcel/$id'
+      preLoaderRoute: typeof DropParcelIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/robot': {
+      id: '/api/public/robot'
+      path: '/api/public/robot'
+      fullPath: '/api/public/robot'
+      preLoaderRoute: typeof ApiPublicRobotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BookRoute: BookRoute,
+  DashboardRoute: DashboardRoute,
+  DropRoute: DropRoute,
+  HelpRoute: HelpRoute,
+  HistoryRoute: HistoryRoute,
+  IncomingRoute: IncomingRoute,
+  LoginRoute: LoginRoute,
+  ManifestRoute: ManifestRoute,
+  NotificationsRoute: NotificationsRoute,
+  OtpRoute: OtpRoute,
+  OutgoingRoute: OutgoingRoute,
+  ProfileRoute: ProfileRoute,
+  RegisterRoute: RegisterRoute,
+  SearchRoute: SearchRoute,
+  SettingsRoute: SettingsRoute,
+  DropParcelIdRoute: DropParcelIdRoute,
+  ParcelsIdRoute: ParcelsIdRoute,
+  ParcelsIndexRoute: ParcelsIndexRoute,
+  ApiPublicRobotRoute: ApiPublicRobotRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -8,6 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -76,21 +77,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "mail room" },
-      { name: "description", content: "mail room" },
-      { name: "author", content: "mail room" },
-      { property: "og:title", content: "mail room" },
-      { property: "og:description", content: "mail room" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { name: "theme-color", content: "#351C75" },
+      { title: "Leapmile Digital Mailroom" },
+      { name: "description", content: "Premium enterprise mailroom: smart lockers, Cube robots, contactless parcel drop-off and pickup." },
+      { name: "author", content: "Leapmile" },
+      { property: "og:title", content: "Leapmile Digital Mailroom" },
+      { property: "og:description", content: "Premium enterprise mailroom: smart lockers, Cube robots, contactless parcel drop-off and pickup." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Leapmile Digital Mailroom" },
+      { name: "twitter:description", content: "Premium enterprise mailroom: smart lockers, Cube robots, contactless parcel drop-off and pickup." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f8251845-c162-4cdd-b6f3-eac3759279c6/id-preview-74f0d8b7--bb26b330-a25b-4886-88e4-5320acb3addf.lovable.app-1784369131214.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f8251845-c162-4cdd-b6f3-eac3759279c6/id-preview-74f0d8b7--bb26b330-a25b-4886-88e4-5320acb3addf.lovable.app-1784369131214.png" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" },
     ],
   }),
   shellComponent: RootShell,
@@ -118,8 +124,28 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <Toaster
+        position="top-center"
+        duration={1500}
+        gap={8}
+        offset={16}
+        visibleToasts={3}
+        toastOptions={{
+          unstyled: true,
+          classNames: {
+            toast: "lm-toast",
+            title: "lm-toast-title",
+            description: "lm-toast-description",
+            icon: "lm-toast-icon",
+            success: "lm-toast-success",
+            error: "lm-toast-error",
+            warning: "lm-toast-warning",
+            info: "lm-toast-info",
+          },
+        }}
+      />
+
     </QueryClientProvider>
   );
 }
