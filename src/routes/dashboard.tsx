@@ -206,8 +206,8 @@ function CourierDashboard() {
   const header = (
     <header className="flex items-center justify-between">
       <div className="min-w-0">
-        <p className="text-[11px] text-muted-foreground">On duty,</p>
-        <h1 className="text-lg font-semibold truncate">{user?.name.split(" ")[0]} 🚚</h1>
+        <p className="text-[11px] text-muted-foreground">Good day,</p>
+        <h1 className="text-lg font-semibold truncate">{user?.name.split(" ")[0]}</h1>
         <LocationSwitcher phone={user?.regNo} fallback={courierLocText} />
 
       </div>
