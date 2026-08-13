@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { MapPin, ChevronDown, ChevronRight, User, Phone, Package, CheckCircle2, Loader2, ScanLine } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Page } from "@/components/mailroom/AppShell";
 import { StorageIcon } from "@/components/mailroom/StorageIcon";
 import { QRScanStage } from "@/components/mailroom/QRScanStage";
+import { DropHardware } from "@/components/mailroom/DropHardware";
 import { useMailroom, createReservation } from "@/lib/mailroom";
 import { useUserLocations, formatUserLocation } from "@/lib/user-locations";
 import { PODCORE_BASE, apiHeaders } from "@/lib/api-config";
@@ -33,6 +34,8 @@ type Step = "locate" | "scan" | "reserve" | "drop" | "done";
 
 type ScannedPod = { pod_id: number; pod_name: string; isRobot: boolean };
 
+type DropTarget = { podId: number; doorNumber?: number; isRobot: boolean };
+
 const STEPS: { key: Step; short: string }[] = [
   { key: "locate", short: "Locate" },
   { key: "scan", short: "Scan" },
@@ -57,6 +60,7 @@ function NewDropPage() {
   const [resType, setResType] = useState("");
   const [typeOpen, setTypeOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [target, setTarget] = useState<DropTarget | null>(null);
 
   const idx = STEPS.findIndex((s) => s.key === step);
 
@@ -111,29 +115,38 @@ function NewDropPage() {
     createReservation({ awb, receiverName: picked.user_name, receiverPhone: picked.user_phone, courier: courierCompany });
     triggerRefresh();
 
-    // Look up the freshly created reservation so we can continue into the drop flow.
-    let reservationId: string | null = null;
-    try {
-      const lookup = await fetch(
-        `${PODCORE_BASE}/reservations/?reservation_awbno=${encodeURIComponent(awb)}&status=active&reservation_status=DropPending&dropby_phone=${encodeURIComponent(courierPhone)}&order_by_field=updated_at&order_by_type=DESC`,
-        { headers: apiHeaders },
-      );
-      const d = await lookup.json();
-      const rec: any = Array.isArray(d?.records) ? d.records[0] : Array.isArray(d) ? d[0] : undefined;
-      if (rec?.id != null) reservationId = String(rec.id);
-    } catch {
-      // Handled below.
+    // Look up the freshly created reservation to get the assigned door.
+    let rec: any = null;
+    for (let attempt = 0; attempt < 4 && !rec; attempt++) {
+      try {
+        const lookup = await fetch(
+          `${PODCORE_BASE}/reservations/?reservation_awbno=${encodeURIComponent(awb)}&status=active&reservation_status=DropPending&dropby_phone=${encodeURIComponent(courierPhone)}&order_by_field=updated_at&order_by_type=DESC`,
+          { headers: apiHeaders },
+        );
+        const d = await lookup.json();
+        rec = Array.isArray(d?.records) ? d.records[0] : Array.isArray(d) ? d[0] : null;
+      } catch {
+        // Retry below.
+      }
+      if (!rec) await new Promise((r) => setTimeout(r, 1000));
     }
     setSubmitting(false);
-
-    if (!reservationId) {
-      toast.success("Reservation created");
-      nav({ to: "/dashboard" });
-      return;
-    }
     toast.success("Reservation created");
-    nav({ to: "/drop-parcel/$id", params: { id: reservationId } });
+
+    setTarget({
+      podId: rec?.pod_id ?? pod.pod_id,
+      doorNumber: rec?.door_number,
+      isRobot: rec?.pod_name ? /robot/i.test(String(rec.pod_name)) : pod.isRobot,
+    });
+    setStep("drop");
   };
+
+  const finishDrop = useCallback(() => {
+    setStep("done");
+    triggerRefresh();
+    toast.success("Parcel dropped successfully");
+    setTimeout(() => nav({ to: "/dashboard" }), 2000);
+  }, [nav]);
 
   return (
     <Page title="Add Parcel to Drop" back hideNav flatHeader>
@@ -328,6 +341,23 @@ function NewDropPage() {
                 {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <ChevronRight className="w-5 h-5" />}
                 Continue
               </button>
+            </div>
+          )}
+
+          {step === "drop" && target && (
+            <DropHardware
+              isRobot={target.isRobot}
+              podId={target.podId}
+              doorNumber={target.doorNumber}
+              onDone={finishDrop}
+            />
+          )}
+
+          {step === "done" && (
+            <div className="w-full py-8 rounded-2xl bg-green-50 text-green-700 flex flex-col items-center gap-2 animate-pop-in min-h-[240px] justify-center">
+              <CheckCircle2 className="w-10 h-10" />
+              <p className="font-semibold text-sm">Parcel dropped successfully</p>
+              <p className="text-[11px] text-green-700/70">Returning to dashboard...</p>
             </div>
           )}
         </div>
