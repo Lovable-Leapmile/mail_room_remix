@@ -93,7 +93,6 @@ export function DropHardware({
     };
   }, [phase, podId, doorNumber, onRetrieved]);
 
-
   // Locker: poll PubSub for opened / closed events.
   useEffect(() => {
     if (isRobot) return;
