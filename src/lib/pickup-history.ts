@@ -15,7 +15,11 @@ export interface PickupHistoryItem {
   awb_number?: string;
 }
 
-export function usePickupHistory(phone?: string, refreshKey = 0): {
+export function usePickupHistory(
+  phone?: string,
+  refreshKey = 0,
+  phoneField: "pickupby_phone" | "dropby_phone" = "pickupby_phone",
+): {
   items: PickupHistoryItem[];
   loading: boolean;
 } {
@@ -30,7 +34,7 @@ export function usePickupHistory(phone?: string, refreshKey = 0): {
       order_by_field: "updated_at",
       order_by_type: "DESC",
     });
-    if (phone) params.set("pickupby_phone", phone);
+    if (phone) params.set(phoneField, phone);
     const url = `${PODCORE_BASE}/reservations/?${params.toString()}`;
     fetch(url, { headers: apiHeaders })
       .then((r) => r.json())
@@ -62,7 +66,7 @@ export function usePickupHistory(phone?: string, refreshKey = 0): {
     return () => {
       cancel = true;
     };
-  }, [phone, refreshKey]);
+  }, [phone, refreshKey, phoneField]);
 
   return { items, loading };
 }
