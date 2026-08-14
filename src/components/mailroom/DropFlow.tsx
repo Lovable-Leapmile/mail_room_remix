@@ -41,7 +41,7 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
   const { selected } = useUserLocations(courierPhone);
   const { users, loading: loadingUsers } = useLocationUsers(selected?.location_id ?? null);
 
-  const [step, setStep] = useState<Step>("locate");
+  const [step, setStep] = useState<Step>("scan");
   const [pod, setPod] = useState<ScannedPod | null>(null);
   const [awb, setAwb] = useState("");
   const [picked, setPicked] = useState<LocationUser | null>(null);
