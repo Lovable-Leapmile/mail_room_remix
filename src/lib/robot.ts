@@ -55,7 +55,7 @@ export async function isTrayReady(trayId: string): Promise<boolean> {
 export async function releaseTray(trayId: string): Promise<boolean> {
   try {
     const res = await fetch(
-      `${PROXY}?action=release_tray&tray_id=${encodeURIComponent(trayId)}&tags=station`,
+      `${PROXY}?action=release_tray&tray_id=${encodeURIComponent(trayId)}`,
       { method: "PATCH" },
     );
     return res.ok;
