@@ -14,6 +14,7 @@ import { usePickupHistory } from "@/lib/pickup-history";
 import { useUserLocations } from "@/lib/user-locations";
 import { PODCORE_BASE, apiHeaders } from "@/lib/api-config";
 import { useRefreshTick } from "@/lib/refresh";
+import bgAsset from "@/assets/login_bg.png.asset.json";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard · Leapmile Mailroom" }] }),
