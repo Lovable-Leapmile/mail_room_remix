@@ -182,7 +182,7 @@ function LocationCard({ parcel }: { parcel: DisplayParcel }) {
       <div className="p-4">
         <div className="rounded-2xl bg-[color:var(--primary-soft)]/50 p-4">
           <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground uppercase tracking-wider">
-            <MapPin className="w-3 h-3" /> Detailed location
+            <MapPin className="w-3 h-3" /> Location
           </div>
           <p className="text-sm font-semibold mt-1 leading-snug">{detailed || "Loading location…"}</p>
         </div>
