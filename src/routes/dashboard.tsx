@@ -65,10 +65,8 @@ function Dashboard() {
   const header = (
     <header className="flex items-center justify-between">
       <div className="min-w-0">
-        <p className="text-[11px] text-muted-foreground">Good day,</p>
         <h1 className="text-lg font-semibold truncate">{user?.name.split(" ")[0]} 👋</h1>
         <LocationSwitcher phone={user?.regNo} fallback={locText} />
-
       </div>
       <div className="flex items-center gap-2 shrink-0">
         <button onClick={() => setOpenProfile(true)} className="haptic-tap w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white text-sm font-semibold" aria-label="Profile">
@@ -211,10 +209,8 @@ function CourierDashboard() {
   const header = (
     <header className="flex items-center justify-between">
       <div className="min-w-0">
-        <p className="text-[11px] text-muted-foreground">Good day,</p>
         <h1 className="text-lg font-semibold truncate">{user?.name.split(" ")[0]}</h1>
         <LocationSwitcher phone={user?.regNo} fallback={courierLocText} />
-
       </div>
       <div className="flex items-center gap-2 shrink-0">
         <button onClick={() => setOpenProfile(true)} className="haptic-tap w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white text-sm font-semibold" aria-label="Profile">
