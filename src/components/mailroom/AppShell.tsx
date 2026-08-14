@@ -123,6 +123,8 @@ function NotificationsSheet({ open, onClose }: { open: boolean; onClose: () => v
 export function ProfileSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const user = useMailroom((s) => s.user);
   const nav = useNavigate();
+  const [openNotif, setOpenNotif] = useState(false);
+  const unread = usePickupNotifications().length;
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -190,6 +192,12 @@ export function ProfileSheet({ open, onClose }: { open: boolean; onClose: () => 
             </div>
 
             <div className="mt-4 ios-card divide-y divide-border">
+              <ProfileRow
+                icon={Bell}
+                label="Notifications"
+                badge={unread}
+                onClick={() => setOpenNotif(true)}
+              />
               <ProfileRow icon={Package} label="My Parcels" onClick={() => go("/parcels")} />
               <ProfileRow icon={HistoryIcon} label="Booking History" onClick={() => go("/history")} />
               <ProfileRow icon={Settings} label="Settings" onClick={() => go("/settings")} />
@@ -206,12 +214,23 @@ export function ProfileSheet({ open, onClose }: { open: boolean; onClose: () => 
           </div>
         </div>
       </div>
+      <NotificationsSheet open={openNotif} onClose={() => setOpenNotif(false)} />
     </div>,
     document.body,
   );
 }
 
-function ProfileRow({ icon: Icon, label, onClick }: { icon: typeof Package; label: string; onClick: () => void }) {
+function ProfileRow({
+  icon: Icon,
+  label,
+  onClick,
+  badge,
+}: {
+  icon: typeof Package;
+  label: string;
+  onClick: () => void;
+  badge?: number;
+}) {
   return (
     <button onClick={onClick} className="w-full flex items-center justify-between p-4 haptic-tap text-left">
       <div className="flex items-center gap-3">
@@ -220,41 +239,31 @@ function ProfileRow({ icon: Icon, label, onClick }: { icon: typeof Package; labe
         </div>
         <span className="text-sm font-medium">{label}</span>
       </div>
-      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+      <div className="flex items-center gap-2">
+        {badge ? (
+          <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+            {badge}
+          </span>
+        ) : null}
+        <ChevronRight className="w-4 h-4 text-muted-foreground" />
+      </div>
     </button>
   );
 }
 
 function EmployeeBottomBar() {
-  const unread = usePickupNotifications().length;
-  const [openNotif, setOpenNotif] = useState(false);
   return (
-    <>
       <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 px-4 pb-4">
-        <div className="flex items-stretch gap-3 p-2 rounded-[28px] bg-white/25 backdrop-blur-2xl border border-white/35 shadow-[0_8px_32px_-12px_rgba(53,28,117,0.18)]">
+        <div className="flex items-stretch p-2 rounded-[28px] bg-white/25 backdrop-blur-2xl border border-white/35 shadow-[0_8px_32px_-12px_rgba(53,28,117,0.18)]">
           <Link
             to="/book"
-            className="haptic-tap flex-[0.8] rounded-[22px] brand-gradient text-white font-semibold text-sm flex items-center justify-center gap-2 py-3.5 shadow-[0_12px_28px_-10px_rgba(53,28,117,0.5)]"
+            className="haptic-tap flex-1 rounded-[22px] brand-gradient text-white font-semibold text-sm flex items-center justify-center gap-2 py-3.5 shadow-[0_12px_28px_-10px_rgba(53,28,117,0.5)]"
           >
             <PlusCircle className="w-5 h-5" />
             Send Parcel
           </Link>
-          <button
-            onClick={() => setOpenNotif(true)}
-            className="haptic-tap relative flex-[0.2] min-w-[56px] rounded-[22px] bg-white/70 flex items-center justify-center"
-            aria-label="Alerts"
-          >
-            <Bell className="w-5 h-5 text-primary" />
-            {unread > 0 && (
-              <span className="absolute top-2.5 right-3 min-w-[16px] h-[16px] px-1 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">
-                {unread}
-              </span>
-            )}
-          </button>
         </div>
       </nav>
-      <NotificationsSheet open={openNotif} onClose={() => setOpenNotif(false)} />
-    </>
   );
 }
 
