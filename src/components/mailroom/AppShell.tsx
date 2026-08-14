@@ -1,5 +1,18 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Package, Bell, ArrowLeft, PlusCircle, X, ShieldAlert, ChevronRight, LogOut, Settings, HelpCircle, ShieldCheck, History as HistoryIcon } from "lucide-react";
+import {
+  Package,
+  Bell,
+  ArrowLeft,
+  PlusCircle,
+  X,
+  ShieldAlert,
+  ChevronRight,
+  LogOut,
+  Settings,
+  HelpCircle,
+  ShieldCheck,
+  History as HistoryIcon,
+} from "lucide-react";
 import { toast } from "sonner";
 import { setState } from "@/lib/mailroom";
 import { useEffect, useState, type ReactNode } from "react";
@@ -37,7 +50,7 @@ function NotificationsSheet({ open, onClose }: { open: boolean; onClose: () => v
     <div
       className={cn(
         "fixed inset-0 z-[60] transition-opacity duration-300",
-        open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
       )}
       onClick={onClose}
       aria-hidden={!open}
@@ -46,7 +59,7 @@ function NotificationsSheet({ open, onClose }: { open: boolean; onClose: () => v
       <div
         className={cn(
           "absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] transition-transform duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)]",
-          open ? "translate-y-0" : "-translate-y-full"
+          open ? "translate-y-0" : "-translate-y-full",
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -57,10 +70,17 @@ function NotificationsSheet({ open, onClose }: { open: boolean; onClose: () => v
               <p className="text-[11px] text-muted-foreground">{pickups.length} ready for pickup</p>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={markAllRead} className="text-xs font-semibold text-primary px-3 py-1.5 rounded-full bg-[color:var(--primary-soft)]">
+              <button
+                onClick={markAllRead}
+                className="text-xs font-semibold text-primary px-3 py-1.5 rounded-full bg-[color:var(--primary-soft)]"
+              >
                 Mark all
               </button>
-              <button onClick={onClose} className="haptic-tap w-9 h-9 rounded-full bg-[color:var(--primary-soft)] flex items-center justify-center" aria-label="Close">
+              <button
+                onClick={onClose}
+                className="haptic-tap w-9 h-9 rounded-full bg-[color:var(--primary-soft)] flex items-center justify-center"
+                aria-label="Close"
+              >
                 <X className="w-4 h-4 text-primary" />
               </button>
             </div>
@@ -98,14 +118,12 @@ function NotificationsSheet({ open, onClose }: { open: boolean; onClose: () => v
                 </Link>
               ))
             )}
-
           </div>
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
-
 }
 
 export function ProfileSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -139,7 +157,7 @@ export function ProfileSheet({ open, onClose }: { open: boolean; onClose: () => 
     <div
       className={cn(
         "fixed inset-0 z-[60] transition-opacity duration-300",
-        open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
       )}
       onClick={onClose}
       aria-hidden={!open}
@@ -148,14 +166,18 @@ export function ProfileSheet({ open, onClose }: { open: boolean; onClose: () => 
       <div
         className={cn(
           "absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] transition-transform duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)]",
-          open ? "translate-y-0" : "-translate-y-full"
+          open ? "translate-y-0" : "-translate-y-full",
         )}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mx-3 mt-3 rounded-[28px] bg-white shadow-[0_24px_60px_-20px_rgba(53,28,117,0.35)] overflow-hidden">
           <div className="flex items-center justify-between px-5 pt-4 pb-2">
             <h2 className="text-lg font-semibold tracking-tight">Profile</h2>
-            <button onClick={onClose} className="haptic-tap w-9 h-9 rounded-full bg-[color:var(--primary-soft)] flex items-center justify-center" aria-label="Close">
+            <button
+              onClick={onClose}
+              className="haptic-tap w-9 h-9 rounded-full bg-[color:var(--primary-soft)] flex items-center justify-center"
+              aria-label="Close"
+            >
               <X className="w-4 h-4 text-primary" />
             </button>
           </div>
@@ -180,7 +202,10 @@ export function ProfileSheet({ open, onClose }: { open: boolean; onClose: () => 
               <ProfileRow icon={HelpCircle} label="Help Center" onClick={() => go("/help")} />
             </div>
 
-            <button onClick={logout} className="haptic-tap mt-4 w-full py-3.5 rounded-2xl bg-white border border-border text-red-600 font-semibold text-sm flex items-center justify-center gap-2">
+            <button
+              onClick={logout}
+              className="haptic-tap mt-4 w-full py-3.5 rounded-2xl bg-white border border-border text-red-600 font-semibold text-sm flex items-center justify-center gap-2"
+            >
               <LogOut className="w-4 h-4" /> Sign out
             </button>
             <p className="text-center text-[11px] text-muted-foreground mt-3">Leapmile Mailroom · v1.0.0</p>
@@ -188,9 +213,8 @@ export function ProfileSheet({ open, onClose }: { open: boolean; onClose: () => 
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
-
 }
 
 function ProfileRow({ icon: Icon, label, onClick }: { icon: typeof Package; label: string; onClick: () => void }) {
@@ -206,7 +230,6 @@ function ProfileRow({ icon: Icon, label, onClick }: { icon: typeof Package; labe
     </button>
   );
 }
-
 
 function EmployeeBottomBar() {
   const unread = usePickupNotifications().length;
@@ -251,7 +274,7 @@ function CourierBottomBar() {
           aria-label="Add Parcel to Drop"
         >
           <PlusCircle className="w-5 h-5" />
-          Add Parcel to Drop
+          Drop Parcel
         </Link>
       </div>
     </nav>
@@ -264,7 +287,17 @@ export function BottomNav() {
   return <EmployeeBottomBar />;
 }
 
-export function TopBar({ title, back = false, right, flat = false }: { title: string; back?: boolean; right?: ReactNode; flat?: boolean }) {
+export function TopBar({
+  title,
+  back = false,
+  right,
+  flat = false,
+}: {
+  title: string;
+  back?: boolean;
+  right?: ReactNode;
+  flat?: boolean;
+}) {
   return (
     <div className="sticky top-0 z-30 pt-safe">
       <div
@@ -272,12 +305,15 @@ export function TopBar({ title, back = false, right, flat = false }: { title: st
           "flex items-center justify-between px-4 py-3",
           flat
             ? "w-full bg-[color:var(--glass)] border-b border-[color:var(--border)] backdrop-blur-xl"
-            : "glass-card mx-4 mt-3 rounded-3xl"
+            : "glass-card mx-4 mt-3 rounded-3xl",
         )}
       >
         <div className="flex items-center gap-2">
           {back && (
-            <button onClick={() => window.history.back()} className="haptic-tap w-9 h-9 rounded-full bg-[color:var(--primary-soft)] flex items-center justify-center">
+            <button
+              onClick={() => window.history.back()}
+              className="haptic-tap w-9 h-9 rounded-full bg-[color:var(--primary-soft)] flex items-center justify-center"
+            >
               <ArrowLeft className="w-4 h-4 text-primary" />
             </button>
           )}
@@ -289,7 +325,23 @@ export function TopBar({ title, back = false, right, flat = false }: { title: st
   );
 }
 
-export function Page({ children, title, back, right, hideNav, fixedHeader, flatHeader }: { children: ReactNode; title?: string; back?: boolean; right?: ReactNode; hideNav?: boolean; fixedHeader?: ReactNode; flatHeader?: boolean }) {
+export function Page({
+  children,
+  title,
+  back,
+  right,
+  hideNav,
+  fixedHeader,
+  flatHeader,
+}: {
+  children: ReactNode;
+  title?: string;
+  back?: boolean;
+  right?: ReactNode;
+  hideNav?: boolean;
+  fixedHeader?: ReactNode;
+  flatHeader?: boolean;
+}) {
   return (
     <div className="app-shell pb-32">
       {title && <TopBar title={title} back={back} right={right} flat={flatHeader} />}
@@ -304,9 +356,13 @@ export function Page({ children, title, back, right, hideNav, fixedHeader, flatH
   );
 }
 
-
-
-export function StatusPill({ label, tone = "primary" }: { label: string; tone?: "primary" | "green" | "amber" | "red" }) {
+export function StatusPill({
+  label,
+  tone = "primary",
+}: {
+  label: string;
+  tone?: "primary" | "green" | "amber" | "red";
+}) {
   const tones = {
     primary: "bg-[color:var(--primary-soft)] text-primary",
     green: "bg-green-50 text-green-700",
