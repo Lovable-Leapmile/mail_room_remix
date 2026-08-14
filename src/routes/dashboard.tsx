@@ -64,6 +64,7 @@ function Dashboard() {
   const [showPendingShipments, setShowPendingShipments] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
+  const hydrated = useHydrated();
 
   const userLoc = useUserLocation(user?.regNo);
   const locText = formatLocation(userLoc) || user?.org || "";
@@ -71,7 +72,7 @@ function Dashboard() {
   const header = (
     <header className="flex items-center justify-between">
       <div className="min-w-0">
-        <h1 className="text-lg font-semibold truncate">{user?.name.split(" ")[0]}</h1>
+        <h1 className="text-lg font-semibold truncate">{hydrated ? user?.name.split(" ")[0] : <span className="inline-block w-20 h-5 rounded bg-muted animate-pulse" />}</h1>
         <LocationSwitcher phone={user?.regNo} fallback={locText} />
       </div>
       <div className="flex items-center gap-2 shrink-0">
