@@ -19,7 +19,7 @@ import {
 } from "@/lib/reservations-create";
 import { triggerRefresh } from "@/lib/refresh";
 
-type Step = "locate" | "scan" | "reserve" | "retrieve" | "drop" | "done";
+type Step = "scan" | "reserve" | "retrieve" | "drop" | "done";
 
 type ScannedPod = { pod_id: number; pod_name: string; isRobot: boolean };
 
