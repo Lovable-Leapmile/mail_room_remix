@@ -1,6 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowUpRight, ArrowDownLeft, Sparkles, Truck, History as HistoryIcon, User, ClipboardList } from "lucide-react";
+import {
+  ArrowUpRight,
+  ArrowDownLeft,
+  Sparkles,
+  Truck,
+  History as HistoryIcon,
+  User,
+  ClipboardList,
+} from "lucide-react";
 import { useMailroom, type Parcel } from "@/lib/mailroom";
 import { cn } from "@/lib/utils";
 import { Page, ProfileSheet } from "@/components/mailroom/AppShell";
@@ -30,8 +38,6 @@ interface ApiPickup {
   updated_at: string;
 }
 
-
-
 function Dashboard() {
   const user = useMailroom((s) => s.user);
   const parcels = useMailroom((s) => s.parcels);
@@ -58,18 +64,21 @@ function Dashboard() {
   const [showHistory, setShowHistory] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
 
-
   const userLoc = useUserLocation(user?.regNo);
   const locText = formatLocation(userLoc) || user?.org || "";
 
   const header = (
     <header className="flex items-center justify-between">
       <div className="min-w-0">
-        <h1 className="text-lg font-semibold truncate">{user?.name.split(" ")[0]} 👋</h1>
+        <h1 className="text-lg font-semibold truncate">{user?.name.split(" ")[0]}</h1>
         <LocationSwitcher phone={user?.regNo} fallback={locText} />
       </div>
       <div className="flex items-center gap-2 shrink-0">
-        <button onClick={() => setOpenProfile(true)} className="haptic-tap w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white text-sm font-semibold" aria-label="Profile">
+        <button
+          onClick={() => setOpenProfile(true)}
+          className="haptic-tap w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white text-sm font-semibold"
+          aria-label="Profile"
+        >
           {user?.avatar}
         </button>
       </div>
@@ -108,11 +117,16 @@ function Dashboard() {
         {showPendingShipments && (
           <div className="mt-3">
             {toSend.length === 0 ? (
-              <div className="ios-card p-6 text-center text-xs text-muted-foreground">No shipments awaiting courier</div>
+              <div className="ios-card p-6 text-center text-xs text-muted-foreground">
+                No shipments awaiting courier
+              </div>
             ) : (
               <div className="bg-white/60 rounded-2xl overflow-hidden shadow-[0_8px_24px_-12px_rgba(53,28,117,0.06)]">
                 {toSend.map((p, i) => (
-                  <div key={p.id} className={cn("p-0", i !== toSend.length - 1 && "border-b border-[oklch(0.94_0.012_285)]")}>
+                  <div
+                    key={p.id}
+                    className={cn("p-0", i !== toSend.length - 1 && "border-b border-[oklch(0.94_0.012_285)]")}
+                  >
                     <OutgoingParcelCard p={p} plain />
                   </div>
                 ))}
@@ -144,14 +158,24 @@ function Dashboard() {
             ) : (
               <div className="bg-white/60 rounded-2xl overflow-hidden shadow-[0_8px_24px_-12px_rgba(53,28,117,0.06)]">
                 {historyItems.map((h, i) => (
-                  <div key={h.id} className={cn("p-4 flex items-start gap-3", i !== historyItems.length - 1 && "border-b border-[oklch(0.94_0.012_285)]")}>
+                  <div
+                    key={h.id}
+                    className={cn(
+                      "p-4 flex items-start gap-3",
+                      i !== historyItems.length - 1 && "border-b border-[oklch(0.94_0.012_285)]",
+                    )}
+                  >
                     <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
                       <Sparkles className="w-4 h-4 text-green-600" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="font-semibold text-sm truncate">{h.reservation_type} · {h.pod_name}</p>
-                        <span className="text-[10px] text-muted-foreground shrink-0">{new Date(h.updated_at).toLocaleDateString()}</span>
+                        <p className="font-semibold text-sm truncate">
+                          {h.reservation_type} · {h.pod_name}
+                        </p>
+                        <span className="text-[10px] text-muted-foreground shrink-0">
+                          {new Date(h.updated_at).toLocaleDateString()}
+                        </span>
                       </div>
                       <p className="text-[11px] text-muted-foreground truncate">
                         {[h.pickupby_name, h.courier_name, h.awb_number].filter(Boolean).join(" · ") || "—"}
@@ -168,7 +192,6 @@ function Dashboard() {
         )}
       </section>
 
-
       <ProfileSheet open={openProfile} onClose={() => setOpenProfile(false)} />
     </Page>
   );
@@ -178,7 +201,9 @@ function CourierDashboard() {
   const user = useMailroom((s) => s.user);
   const parcels = useMailroom((s) => s.parcels);
   const courierCompany = user?.org?.split("·")[0]?.trim() ?? "";
-  const courierPickups = parcels.filter((p) => p.direction === "outgoing" && p.status === "Ready for Pickup" && p.courier === courierCompany);
+  const courierPickups = parcels.filter(
+    (p) => p.direction === "outgoing" && p.status === "Ready for Pickup" && p.courier === courierCompany,
+  );
   const [openProfile, setOpenProfile] = useState(false);
   const [dropTarget, setDropTarget] = useState<Parcel | null>(null);
   const [showPickups, setShowPickups] = useState(false);
@@ -213,7 +238,11 @@ function CourierDashboard() {
         <LocationSwitcher phone={user?.regNo} fallback={courierLocText} />
       </div>
       <div className="flex items-center gap-2 shrink-0">
-        <button onClick={() => setOpenProfile(true)} className="haptic-tap w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white text-sm font-semibold" aria-label="Profile">
+        <button
+          onClick={() => setOpenProfile(true)}
+          className="haptic-tap w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white text-sm font-semibold"
+          aria-label="Profile"
+        >
           {user?.avatar}
         </button>
       </div>
@@ -244,7 +273,6 @@ function CourierDashboard() {
         )}
       </section>
 
-
       <div className="my-6 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
       {/* Pickup pendings — secondary, collapsed */}
@@ -265,8 +293,17 @@ function CourierDashboard() {
             ) : (
               <div className="bg-white/60 rounded-2xl overflow-hidden shadow-[0_8px_24px_-12px_rgba(53,28,117,0.06)]">
                 {courierPickups.map((p, i) => (
-                  <div key={p.id} className={cn("p-0", i !== courierPickups.length - 1 && "border-b border-[oklch(0.94_0.012_285)]")}>
-                    <ParcelCard p={p} primary={p.sender} secondary={`${p.storageId} · ${p.trackingId}`} arrow="incoming" plain />
+                  <div
+                    key={p.id}
+                    className={cn("p-0", i !== courierPickups.length - 1 && "border-b border-[oklch(0.94_0.012_285)]")}
+                  >
+                    <ParcelCard
+                      p={p}
+                      primary={p.sender}
+                      secondary={`${p.storageId} · ${p.trackingId}`}
+                      arrow="incoming"
+                      plain
+                    />
                   </div>
                 ))}
               </div>
@@ -297,14 +334,24 @@ function CourierDashboard() {
             ) : (
               <div className="bg-white/60 rounded-2xl overflow-hidden shadow-[0_8px_24px_-12px_rgba(53,28,117,0.06)]">
                 {courierHistory.map((h, i) => (
-                  <div key={h.id} className={cn("p-4 flex items-start gap-3", i !== courierHistory.length - 1 && "border-b border-[oklch(0.94_0.012_285)]")}>
+                  <div
+                    key={h.id}
+                    className={cn(
+                      "p-4 flex items-start gap-3",
+                      i !== courierHistory.length - 1 && "border-b border-[oklch(0.94_0.012_285)]",
+                    )}
+                  >
                     <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
                       <Sparkles className="w-4 h-4 text-green-600" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="font-semibold text-sm truncate">{h.reservation_type} · {h.pod_name}</p>
-                        <span className="text-[10px] text-muted-foreground shrink-0">{new Date(h.updated_at).toLocaleDateString()}</span>
+                        <p className="font-semibold text-sm truncate">
+                          {h.reservation_type} · {h.pod_name}
+                        </p>
+                        <span className="text-[10px] text-muted-foreground shrink-0">
+                          {new Date(h.updated_at).toLocaleDateString()}
+                        </span>
                       </div>
                       <p className="text-[11px] text-muted-foreground truncate">
                         {[h.pickupby_name, h.courier_name, h.awb_number].filter(Boolean).join(" · ") || "—"}
@@ -345,7 +392,9 @@ function ApiPickupCard({ r }: { r: ApiPickup }) {
             <p className="font-semibold text-sm truncate">{r.reservation_type}</p>
             <ArrowDownLeft className="w-4 h-4 text-primary shrink-0" />
           </div>
-          <p className="text-xs text-muted-foreground truncate">{r.location_name} · {r.pod_name}</p>
+          <p className="text-xs text-muted-foreground truncate">
+            {r.location_name} · {r.pod_name}
+          </p>
           <div className="flex items-center justify-between mt-2">
             <span className="text-[11px] font-semibold px-2 py-1 rounded-full flex items-center gap-1.5 bg-[color:var(--primary-soft)] text-primary">
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
@@ -373,7 +422,9 @@ function ApiDropCard({ r }: { r: ApiPickup }) {
             <p className="font-semibold text-sm truncate">{r.reservation_type}</p>
             <ArrowUpRight className="w-4 h-4 text-primary shrink-0" />
           </div>
-          <p className="text-xs text-muted-foreground truncate">{r.location_name} · {r.pod_name}</p>
+          <p className="text-xs text-muted-foreground truncate">
+            {r.location_name} · {r.pod_name}
+          </p>
           <div className="flex items-center justify-between mt-2">
             <span className="text-[11px] font-semibold px-2 py-1 rounded-full flex items-center gap-1.5 bg-amber-50 text-amber-700">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
