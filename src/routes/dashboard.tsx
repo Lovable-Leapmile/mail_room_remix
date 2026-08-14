@@ -244,38 +244,14 @@ function CourierDashboard() {
 
   return (
     <Page fixedHeader={header}>
-      {/* Drop pendings — highest priority */}
+      {/* Pickup pendings — first */}
       <section className="mt-6">
-        <button
-          onClick={() => setShowDrops((v) => !v)}
-          className="haptic-tap w-full bg-white/60 rounded-2xl p-4 flex items-center justify-between shadow-[0_8px_24px_-12px_rgba(53,28,117,0.06)]"
-        >
-          <p className="text-sm font-semibold flex items-center gap-1.5">
-            <ClipboardList className="w-3.5 h-3.5 text-primary" /> Drop Pending
-          </p>
-          <span className="text-[11px] text-muted-foreground">{apiDrops.length}</span>
-        </button>
-        {showDrops && (
-          <div className="mt-3 space-y-3">
-            {apiDrops.length === 0 ? (
-              <EmptySmall text="No parcels waiting to drop" />
-            ) : (
-              apiDrops.map((r) => <ApiDropCard key={r.id} r={r} />)
-            )}
-          </div>
-        )}
-      </section>
-
-      <div className="my-6 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-
-      {/* Pickup pendings — secondary, collapsed */}
-      <section>
         <button
           onClick={() => setShowPickups((v) => !v)}
           className="haptic-tap w-full bg-white/60 rounded-2xl p-4 flex items-center justify-between shadow-[0_8px_24px_-12px_rgba(53,28,117,0.06)]"
         >
-          <p className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5">
-            <Truck className="w-3.5 h-3.5" /> Pickup Pending
+          <p className="text-sm font-semibold flex items-center gap-1.5">
+            <Truck className="w-3.5 h-3.5 text-primary" /> Pickup Pending
           </p>
           <span className="text-[11px] text-muted-foreground">{courierPickups.length}</span>
         </button>
@@ -300,6 +276,30 @@ function CourierDashboard() {
                   </div>
                 ))}
               </div>
+            )}
+          </div>
+        )}
+      </section>
+
+      <div className="my-6 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
+      {/* Drop pendings — second */}
+      <section>
+        <button
+          onClick={() => setShowDrops((v) => !v)}
+          className="haptic-tap w-full bg-white/60 rounded-2xl p-4 flex items-center justify-between shadow-[0_8px_24px_-12px_rgba(53,28,117,0.06)]"
+        >
+          <p className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5">
+            <ClipboardList className="w-3.5 h-3.5" /> Drop Pending
+          </p>
+          <span className="text-[11px] text-muted-foreground">{apiDrops.length}</span>
+        </button>
+        {showDrops && (
+          <div className="mt-3 space-y-3">
+            {apiDrops.length === 0 ? (
+              <EmptySmall text="No parcels waiting to drop" />
+            ) : (
+              apiDrops.map((r) => <ApiDropCard key={r.id} r={r} />)
             )}
           </div>
         )}
