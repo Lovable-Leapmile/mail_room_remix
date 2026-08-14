@@ -21,8 +21,11 @@ export function DropHardware({
   onRetrieved?: () => void;
 }) {
   const [phase, setPhase] = useState<Phase>("starting");
+  const [trayReady, setTrayReady] = useState(false);
   const trayRef = useRef<string | null>(null);
   const startedRef = useRef(false);
+  const onRetrievedCalledRef = useRef(false);
+
 
   // Kick off the hardware call once (robot: retrieve tray, locker: publish open).
   useEffect(() => {
