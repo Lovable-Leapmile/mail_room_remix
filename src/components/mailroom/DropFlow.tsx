@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
-import { MapPin, ChevronRight, User, Phone, Package, CheckCircle2, Loader2, ScanLine, ArrowLeft, X } from "lucide-react";
+import { MapPin, ChevronRight, User, Package, CheckCircle2, Loader2, ScanLine, ArrowLeft, X } from "lucide-react";
 import logoAsset from "@/assets/leapmile_logo.png.asset.json";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
