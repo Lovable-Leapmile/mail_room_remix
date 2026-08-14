@@ -19,14 +19,13 @@ import {
 } from "@/lib/reservations-create";
 import { triggerRefresh } from "@/lib/refresh";
 
-type Step = "locate" | "scan" | "reserve" | "retrieve" | "drop" | "done";
+type Step = "scan" | "reserve" | "retrieve" | "drop" | "done";
 
 type ScannedPod = { pod_id: number; pod_name: string; isRobot: boolean };
 
 type DropTarget = { podId: number; doorNumber?: number; isRobot: boolean };
 
 const STEPS: { key: Step; short: string }[] = [
-  { key: "locate", short: "Locate Device" },
   { key: "scan", short: "Scan Parcel" },
   { key: "reserve", short: "Reserve Locker" },
   { key: "retrieve", short: "Opening" },
@@ -42,7 +41,7 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
   const { selected } = useUserLocations(courierPhone);
   const { users, loading: loadingUsers } = useLocationUsers(selected?.location_id ?? null);
 
-  const [step, setStep] = useState<Step>("locate");
+  const [step, setStep] = useState<Step>("scan");
   const [pod, setPod] = useState<ScannedPod | null>(null);
   const [awb, setAwb] = useState("");
   const [picked, setPicked] = useState<LocationUser | null>(null);
@@ -165,32 +164,6 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
     const step = key;
     return (
       <>
-          {step === "locate" && (
-            <div>
-              <div className="rounded-2xl bg-[color:var(--primary-soft)]/50 p-5 text-center">
-                <div className="w-14 h-14 rounded-2xl bg-white mx-auto flex items-center justify-center">
-                  <MapPin className="w-7 h-7 text-primary" />
-                </div>
-                <p className="mt-3 font-semibold text-sm">Locate the device</p>
-                <p className="mt-1 text-xs text-muted-foreground max-w-[280px] mx-auto">
-                  Walk to the Robot at your location. You can reserve the parcel only once you're at the device.
-                </p>
-                <div className="mt-4 rounded-2xl bg-white px-4 py-3 text-left flex items-center gap-3">
-                  <MapPin className="w-4 h-4 text-primary shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Location</p>
-                    <p className="mt-0.5 text-sm font-semibold truncate">{formatUserLocation(selected) || "—"}</p>
-                  </div>
-                </div>
-              </div>
-              <button
-                onClick={() => setStep("scan")}
-                className="haptic-tap mt-4 w-full py-4 rounded-2xl brand-gradient text-white text-sm font-semibold flex items-center justify-center gap-2"
-              >
-                Continue <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          )}
 
           {step === "scan" && (
             <QRScanStage
@@ -365,7 +338,7 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
 
   return (
     <Page hideNav>
-      <div className="-mx-4 sticky top-0 z-30 pt-safe bg-[color:var(--glass)] border-b border-[color:var(--border)] backdrop-blur-xl">
+      <div className="-mx-4 -mt-4 sticky top-0 z-30 bg-[color:var(--glass)] border-b border-[color:var(--border)] backdrop-blur-xl">
         <div className="relative flex items-center justify-center px-3 py-2.5">
           <button
             onClick={() => window.history.back()}
@@ -378,7 +351,13 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
         </div>
       </div>
 
-      <h1 className="mt-4 text-[22px] font-bold tracking-tight">{title}</h1>
+      <div className="mt-4 flex items-center justify-between gap-3">
+        <h1 className="text-[22px] font-bold tracking-tight">{title}</h1>
+        <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+          <MapPin className="w-3 h-3 text-primary shrink-0" />
+          <span className="truncate max-w-[140px]">{formatUserLocation(selected) || "—"}</span>
+        </div>
+      </div>
 
       <div ref={stripRef} className="mt-4">
         {STEPS.map((s, i) => {
