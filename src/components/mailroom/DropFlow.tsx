@@ -164,32 +164,6 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
     const step = key;
     return (
       <>
-          {step === "locate" && (
-            <div>
-              <div className="rounded-2xl bg-[color:var(--primary-soft)]/50 p-5 text-center">
-                <div className="w-14 h-14 rounded-2xl bg-white mx-auto flex items-center justify-center">
-                  <MapPin className="w-7 h-7 text-primary" />
-                </div>
-                <p className="mt-3 font-semibold text-sm">Locate the device</p>
-                <p className="mt-1 text-xs text-muted-foreground max-w-[280px] mx-auto">
-                  Walk to the Robot at your location. You can reserve the parcel only once you're at the device.
-                </p>
-                <div className="mt-4 rounded-2xl bg-white px-4 py-3 text-left flex items-center gap-3">
-                  <MapPin className="w-4 h-4 text-primary shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Location</p>
-                    <p className="mt-0.5 text-sm font-semibold truncate">{formatUserLocation(selected) || "—"}</p>
-                  </div>
-                </div>
-              </div>
-              <button
-                onClick={() => setStep("scan")}
-                className="haptic-tap mt-4 w-full py-4 rounded-2xl brand-gradient text-white text-sm font-semibold flex items-center justify-center gap-2"
-              >
-                Continue <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          )}
 
           {step === "scan" && (
             <QRScanStage
