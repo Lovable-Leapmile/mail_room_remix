@@ -1,12 +1,13 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { MapPin, ChevronDown, ChevronRight, User, Phone, Package, CheckCircle2, Loader2, ScanLine, ArrowLeft } from "lucide-react";
+import { useCallback, useState } from "react";
+import { MapPin, ChevronRight, User, Phone, Package, CheckCircle2, Loader2, ScanLine, ArrowLeft, X } from "lucide-react";
 import logoAsset from "@/assets/leapmile_logo.png.asset.json";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Page } from "@/components/mailroom/AppShell";
 import { StorageIcon } from "@/components/mailroom/StorageIcon";
 import { QRScanStage } from "@/components/mailroom/QRScanStage";
+import { StepTimeline } from "@/components/mailroom/StepTimeline";
 import { DropHardware } from "@/components/mailroom/DropHardware";
 import { useMailroom, createReservation } from "@/lib/mailroom";
 import { useUserLocations, formatUserLocation } from "@/lib/user-locations";
@@ -45,20 +46,12 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
   const [pod, setPod] = useState<ScannedPod | null>(null);
   const [awb, setAwb] = useState("");
   const [picked, setPicked] = useState<LocationUser | null>(null);
-  const [userOpen, setUserOpen] = useState(false);
   const [resType, setResType] = useState("");
-  const [typeOpen, setTypeOpen] = useState(false);
+  const [modal, setModal] = useState<null | "awb" | "user" | "type">(null);
   const [submitting, setSubmitting] = useState(false);
   const [target, setTarget] = useState<DropTarget | null>(null);
 
   const idx = STEPS.findIndex((s) => s.key === step);
-
-  const stripRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = stripRef.current?.querySelector<HTMLElement>(`[data-step="${idx}"]`);
-    const t = setTimeout(() => el?.scrollIntoView({ behavior: "smooth", block: "center" }), 150);
-    return () => clearTimeout(t);
-  }, [idx]);
 
   const verifyPodScan = async (raw: string): Promise<boolean> => {
     const value = (raw || "").trim();
@@ -185,71 +178,21 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
                 </div>
               </div>
 
-              {/* AWB */}
-              <div className="rounded-2xl border border-border bg-white px-4 py-3 flex items-center gap-3 focus-within:border-primary">
-                <ScanLine className="w-4 h-4 text-primary shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">AWB Number</p>
-                  <input
-                    value={awb}
-                    onChange={(e) => setAwb(e.target.value)}
-                    placeholder="Scan or enter AWB number"
-                    className="mt-0.5 w-full bg-transparent outline-none text-sm font-semibold"
-                  />
-                </div>
-              </div>
-              <AwbScanner onScanned={setAwb} />
+              <FieldButton
+                icon={<ScanLine className="w-4 h-4 text-primary shrink-0" />}
+                label="AWB Number"
+                value={awb || "Scan or enter AWB"}
+                filled={!!awb}
+                onClick={() => setModal("awb")}
+              />
 
-              {/* Employee */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setUserOpen((v) => !v);
-                    setTypeOpen(false);
-                  }}
-                  className="haptic-tap w-full rounded-2xl border border-border bg-white px-4 py-3 flex items-center gap-3 text-left"
-                >
-                  <User className="w-4 h-4 text-primary shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Employee</p>
-                    <p className="mt-0.5 text-sm font-semibold truncate">
-                      {picked ? picked.user_name : loadingUsers ? "Loading employees…" : "Select employee"}
-                    </p>
-                  </div>
-                  <ChevronDown className={cn("w-4 h-4 text-primary transition-transform", userOpen && "rotate-180")} />
-                </button>
-                {userOpen && (
-                  <div className="absolute left-0 right-0 top-full mt-2 z-50 max-h-56 overflow-y-auto hide-scrollbar rounded-2xl bg-white border border-border shadow-[0_18px_44px_-18px_rgba(53,28,117,0.4)]">
-                    {users.length === 0 && (
-                      <p className="px-4 py-3 text-xs text-muted-foreground">
-                        {loadingUsers ? "Loading…" : "No employees at this location"}
-                      </p>
-                    )}
-                    {users.map((u) => (
-                      <button
-                        key={u.user_phone}
-                        onClick={() => {
-                          setPicked(u);
-                          setUserOpen(false);
-                        }}
-                        className={cn(
-                          "w-full text-left px-4 py-3 haptic-tap flex items-center justify-between gap-2",
-                          picked?.user_phone === u.user_phone && "bg-[color:var(--primary-soft)]",
-                        )}
-                      >
-                        <span className="min-w-0">
-                          <span className="block text-xs font-semibold truncate">{u.user_name}</span>
-                          <span className="block text-[11px] text-muted-foreground">{u.user_phone}</span>
-                        </span>
-                        {picked?.user_phone === u.user_phone && (
-                          <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <FieldButton
+                icon={<User className="w-4 h-4 text-primary shrink-0" />}
+                label="Employee"
+                value={picked ? picked.user_name : loadingUsers ? "Loading employees…" : "Select employee"}
+                filled={!!picked}
+                onClick={() => setModal("user")}
+              />
 
               {picked && (
                 <div className="rounded-2xl bg-[color:var(--primary-soft)]/40 px-4 py-3 flex items-center gap-3">
@@ -263,46 +206,45 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
                 </div>
               )}
 
-              {/* Reservation type */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTypeOpen((v) => !v);
-                    setUserOpen(false);
+              <FieldButton
+                icon={<Package className="w-4 h-4 text-primary shrink-0" />}
+                label="Reservation Type"
+                value={resType || "Select type"}
+                filled={!!resType}
+                onClick={() => setModal("type")}
+              />
+
+              {modal === "awb" && (
+                <AwbModal
+                  initial={awb}
+                  onClose={() => setModal(null)}
+                  onConfirm={(v) => {
+                    setAwb(v);
+                    setModal(null);
                   }}
-                  className="haptic-tap w-full rounded-2xl border border-border bg-white px-4 py-3 flex items-center gap-3 text-left"
-                >
-                  <Package className="w-4 h-4 text-primary shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-                      Reservation Type
-                    </p>
-                    <p className="mt-0.5 text-sm font-semibold truncate">{resType || "Select type"}</p>
-                  </div>
-                  <ChevronDown className={cn("w-4 h-4 text-primary transition-transform", typeOpen && "rotate-180")} />
-                </button>
-                {typeOpen && (
-                  <div className="absolute left-0 right-0 top-full mt-2 z-50 max-h-56 overflow-y-auto hide-scrollbar rounded-2xl bg-white border border-border shadow-[0_18px_44px_-18px_rgba(53,28,117,0.4)]">
-                    {RESERVATION_TYPES.map((t) => (
-                      <button
-                        key={t}
-                        onClick={() => {
-                          setResType(t);
-                          setTypeOpen(false);
-                        }}
-                        className={cn(
-                          "w-full text-left px-4 py-3 text-xs font-semibold haptic-tap flex items-center justify-between",
-                          resType === t && "bg-[color:var(--primary-soft)]",
-                        )}
-                      >
-                        {t}
-                        {resType === t && <CheckCircle2 className="w-4 h-4 text-primary" />}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+                />
+              )}
+              {modal === "user" && (
+                <UserModal
+                  users={users}
+                  loading={loadingUsers}
+                  onClose={() => setModal(null)}
+                  onPick={(u) => {
+                    setPicked(u);
+                    setModal(null);
+                  }}
+                />
+              )}
+              {modal === "type" && (
+                <TypeModal
+                  selected={resType}
+                  onClose={() => setModal(null)}
+                  onPick={(t) => {
+                    setResType(t);
+                    setModal(null);
+                  }}
+                />
+              )}
 
               <button
                 onClick={submit}
@@ -359,84 +301,187 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
         </div>
       </div>
 
-      <div ref={stripRef} className="mt-4">
-        {STEPS.map((s, i) => {
-          const done = i < idx;
-          const active = i === idx;
-          const last = i === STEPS.length - 1;
-          return (
-            <div key={s.key} data-step={i} className="flex gap-3">
-              <div className="flex flex-col items-center">
-                <div
-                  className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all duration-300",
-                    done && "bg-green-500 text-white",
-                    active && "brand-gradient text-white shadow-[0_8px_20px_-8px_rgba(53,28,117,0.8)] scale-105",
-                    !done && !active && "bg-muted text-muted-foreground",
-                  )}
-                >
-                  {done ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
-                </div>
-                {!last && (
-                  <div className={cn("w-px flex-1 my-1 transition-colors duration-500", done ? "bg-green-400" : "bg-border")} />
-                )}
-              </div>
-              <div className="flex-1 min-w-0 pb-4">
-                <p
-                  className={cn(
-                    "text-[15px] font-semibold leading-8 transition-colors",
-                    active ? "text-foreground" : done ? "text-green-700" : "text-muted-foreground",
-                  )}
-                >
-                  {s.short}
-                </p>
-                <div
-                  className={cn(
-                    "grid transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]",
-                    active ? "grid-rows-[1fr] opacity-100 mt-2" : "grid-rows-[0fr] opacity-0",
-                  )}
-                >
-                  <div className="overflow-hidden">{active && stepBody(s.key)}</div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <StepTimeline className="mt-4" steps={STEPS} activeIndex={idx} renderBody={(k) => stepBody(k as Step)} />
     </Page>
   );
 }
 
-function AwbScanner({ onScanned }: { onScanned: (v: string) => void }) {
-  const [open, setOpen] = useState(false);
-  if (!open) {
-    return (
-      <button
-        onClick={() => setOpen(true)}
-        className="haptic-tap w-full py-3 rounded-2xl bg-white border border-border text-sm font-semibold text-primary flex items-center justify-center gap-2"
-      >
-        <ScanLine className="w-4 h-4" /> Scan AWB barcode
-      </button>
-    );
-  }
+function FieldButton({
+  icon,
+  label,
+  value,
+  filled,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  filled: boolean;
+  onClick: () => void;
+}) {
   return (
-    <div>
-      <QRScanStage
-        instruction="Point the camera at the AWB barcode"
-        verifyScan={async (v) => {
-          const value = (v || "").trim();
-          if (!value) return false;
-          onScanned(value);
-          return true;
-        }}
-        onScanned={() => setOpen(false)}
-      />
-      <button
-        onClick={() => setOpen(false)}
-        className="haptic-tap mt-3 w-full py-3 rounded-2xl bg-white border border-border text-sm font-semibold text-primary"
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "haptic-tap w-full rounded-2xl border bg-white px-4 py-3 flex items-center gap-3 text-left",
+        filled ? "border-primary" : "border-border",
+      )}
+    >
+      {icon}
+      <div className="flex-1 min-w-0">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{label}</p>
+        <p className={cn("mt-0.5 text-sm font-semibold truncate", !filled && "text-muted-foreground")}>{value}</p>
+      </div>
+      {filled ? <CheckCircle2 className="w-4 h-4 text-primary shrink-0" /> : <ChevronRight className="w-4 h-4 text-primary shrink-0" />}
+    </button>
+  );
+}
+
+function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  return (
+    <div className="fixed inset-0 z-[60] bg-black/40 flex items-end animate-fade-in" onClick={onClose}>
+      <div
+        className="w-full bg-white rounded-t-3xl p-5 max-h-[85vh] overflow-y-auto hide-scrollbar"
+        onClick={(e) => e.stopPropagation()}
       >
-        Enter AWB manually
-      </button>
+        <div className="flex items-center justify-between">
+          <p className="font-semibold text-base">{title}</p>
+          <button onClick={onClose} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="mt-4">{children}</div>
+      </div>
     </div>
+  );
+}
+
+function AwbModal({
+  initial,
+  onClose,
+  onConfirm,
+}: {
+  initial: string;
+  onClose: () => void;
+  onConfirm: (v: string) => void;
+}) {
+  const [value, setValue] = useState(initial);
+  return (
+    <Modal title="Scan AWB" onClose={onClose}>
+      <div className="max-w-[220px] mx-auto">
+        <QRScanStage
+          instruction="Point the camera at the AWB barcode"
+          verifyScan={async (v) => {
+            const raw = (v || "").trim();
+            if (!raw) return false;
+            setValue(raw);
+            return true;
+          }}
+          onScanned={() => {}}
+        />
+      </div>
+      <div className="mt-4 rounded-2xl border border-border bg-white px-4 py-3 flex items-center gap-3 focus-within:border-primary">
+        <ScanLine className="w-4 h-4 text-primary shrink-0" />
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">AWB Number</p>
+          <input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="Enter AWB manually"
+            className="mt-0.5 w-full bg-transparent outline-none text-sm font-semibold"
+          />
+        </div>
+      </div>
+      <button
+        onClick={() => onConfirm(value.trim())}
+        disabled={!value.trim()}
+        className="haptic-tap mt-4 w-full py-3.5 rounded-2xl brand-gradient text-white text-sm font-semibold disabled:opacity-40"
+      >
+        OK
+      </button>
+    </Modal>
+  );
+}
+
+function UserModal({
+  users,
+  loading,
+  onClose,
+  onPick,
+}: {
+  users: LocationUser[];
+  loading: boolean;
+  onClose: () => void;
+  onPick: (u: LocationUser) => void;
+}) {
+  const [digits, setDigits] = useState("");
+  const matches = digits.length === 4 ? users.filter((u) => u.user_phone.replace(/\D/g, "").endsWith(digits)) : [];
+  return (
+    <Modal title="Select Employee" onClose={onClose}>
+      <div className="rounded-2xl border border-border bg-white px-4 py-3">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+          Last 4 digits of mobile number
+        </p>
+        <input
+          value={digits}
+          onChange={(e) => setDigits(e.target.value.replace(/\D/g, "").slice(0, 4))}
+          inputMode="numeric"
+          placeholder="0000"
+          autoFocus
+          className="mt-1 w-full bg-transparent outline-none text-lg font-bold tracking-[0.4em]"
+        />
+      </div>
+
+      <div className="mt-4 space-y-2">
+        {loading && <p className="text-xs text-muted-foreground">Loading employees…</p>}
+        {!loading && digits.length < 4 && (
+          <p className="text-xs text-muted-foreground">Enter the last 4 digits to find the employee.</p>
+        )}
+        {!loading && digits.length === 4 && matches.length === 0 && (
+          <p className="text-xs text-muted-foreground">No employee found with those digits.</p>
+        )}
+        {matches.map((u) => (
+          <button
+            key={u.user_phone}
+            onClick={() => onPick(u)}
+            className="haptic-tap w-full text-left px-4 py-3 rounded-2xl border border-border bg-white"
+          >
+            <span className="block text-sm font-semibold truncate">{u.user_name}</span>
+            <span className="block text-[11px] text-muted-foreground">{u.user_phone}</span>
+          </button>
+        ))}
+      </div>
+    </Modal>
+  );
+}
+
+function TypeModal({
+  selected,
+  onClose,
+  onPick,
+}: {
+  selected: string;
+  onClose: () => void;
+  onPick: (t: string) => void;
+}) {
+  return (
+    <Modal title="Reservation Type" onClose={onClose}>
+      <div className="space-y-2">
+        {RESERVATION_TYPES.map((t) => (
+          <button
+            key={t}
+            onClick={() => onPick(t)}
+            className={cn(
+              "haptic-tap w-full text-left px-4 py-3 rounded-2xl border text-sm font-semibold flex items-center justify-between",
+              selected === t ? "border-primary bg-[color:var(--primary-soft)] text-primary" : "border-border bg-white",
+            )}
+          >
+            {t}
+            {selected === t && <CheckCircle2 className="w-4 h-4 text-primary" />}
+          </button>
+        ))}
+      </div>
+    </Modal>
   );
 }

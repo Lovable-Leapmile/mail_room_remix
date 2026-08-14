@@ -7,6 +7,7 @@ import { usePodLocation, formatLocation } from "@/lib/locations";
 import { PODCORE_BASE, PUBSUB_BASE, apiHeaders } from "@/lib/api-config";
 import { fetchDoorState, retrieveTray, isTrayReady, releaseTray, patchDoorStatus } from "@/lib/robot";
 import { Page } from "@/components/mailroom/AppShell";
+import { StepTimeline } from "@/components/mailroom/StepTimeline";
 import { StorageIcon } from "@/components/mailroom/StorageIcon";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -357,13 +358,6 @@ function PickupJourney({
     next();
   };
 
-  // Auto-scroll stepper chip into view
-  const stripRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = stripRef.current?.querySelector<HTMLElement>(`[data-step="${idx}"]`);
-    el?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-  }, [idx]);
-
   // Verify scanned QR against reservation pod, publish door-open command,
   // then start subscribe polling for door status.
   const verifyAndSubscribe = async (qrValue: string): Promise<boolean> => {
@@ -441,52 +435,25 @@ function PickupJourney({
         Pickup Journey
       </p>
 
-      {/* Horizontal stepper */}
-      <div ref={stripRef} className="flex items-center gap-1 overflow-x-auto hide-scrollbar pb-1">
-        {steps.map((s, i) => {
-          const done = i < idx;
-          const active = i === idx;
+      <StepTimeline
+        steps={steps}
+        activeIndex={idx}
+        renderBody={(key) => {
+          const s = steps.find((x) => x.key === key);
+          if (!s) return null;
           return (
-            <div key={s.key} data-step={i} className="flex items-center gap-1 shrink-0">
-              <div
-                className={cn(
-                  "flex items-center gap-2 px-3 py-2 rounded-full transition-all",
-                  done && "bg-green-50 text-green-700",
-                  active && "brand-gradient text-white shadow-sm",
-                  !done && !active && "bg-muted text-muted-foreground",
-                )}
-              >
-                <div
-                  className={cn(
-                    "w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold",
-                    done && "bg-green-500 text-white",
-                    active && "bg-white/25 text-white",
-                    !done && !active && "bg-white text-muted-foreground",
-                  )}
-                >
-                  {done ? <Check className="w-3 h-3" /> : i + 1}
-                </div>
-                <span className="text-[11px] font-semibold whitespace-nowrap">{s.short}</span>
-              </div>
-              {i < steps.length - 1 && <div className={cn("w-3 h-px", done ? "bg-green-400" : "bg-border")} />}
-            </div>
+            <StagePanel
+              step={s}
+              isRobot={isRobot}
+              storageId={storageId}
+              verifyScan={verifyAndSubscribe}
+              onScanned={next}
+              onConfirmCollected={confirmCollected}
+            />
           );
-        })}
-      </div>
+        }}
+      />
 
-      {/* Sliding stage panel */}
-      <div className="relative mt-4 overflow-hidden">
-        <div key={step.key} className="animate-slide-in-right">
-          <StagePanel
-            step={step}
-            isRobot={isRobot}
-            storageId={storageId}
-            verifyScan={verifyAndSubscribe}
-            onScanned={next}
-            onConfirmCollected={confirmCollected}
-          />
-        </div>
-      </div>
     </div>
   );
 }
