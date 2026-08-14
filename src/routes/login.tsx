@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { signIn, lookupUserType, type DetectedRole } from "@/lib/mailroom";
@@ -44,12 +44,12 @@ function LoginPage() {
   }, [trimmedReg, pw]);
 
   const buttonLabel = loading
-    ? "Signing in…"
+    ? "Logging in…"
     : detected === "courier"
-    ? "Sign In as Courier"
+    ? "Login as Courier"
     : detected === "employee"
-    ? "Sign In as Employee"
-    : "Sign In";
+    ? "Login as Employee"
+    : "Login";
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,8 +87,8 @@ function LoginPage() {
           className="w-32 h-auto object-contain"
         />
         <p
-          className="mt-1 text-[13px] font-medium tracking-wide"
-          style={{ color: "#666680" }}
+          className="mt-4 font-semibold tracking-wide"
+          style={{ color: "#666680", fontSize: 22 }}
         >
           Digital Mailroom
         </p>
@@ -96,14 +96,7 @@ function LoginPage() {
 
       {/* Content */}
       <main className="flex-1 flex flex-col px-6 pt-8">
-        <h1
-          className="font-bold leading-tight"
-          style={{ fontSize: 34, color: "#1F1F3A", letterSpacing: "-0.02em" }}
-        >
-          Welcome Back
-        </h1>
-
-        <form onSubmit={submit} className="mt-8 flex flex-col">
+        <form onSubmit={submit} className="mt-4 flex flex-col w-full max-w-[340px] mx-auto">
           {/* Mobile number */}
           <label
             htmlFor="reg"
@@ -220,17 +213,6 @@ function LoginPage() {
           </button>
         </form>
 
-        {/* Bottom */}
-        <div className="mt-auto pt-10 pb-8 flex items-center justify-center gap-1.5 text-[15px]">
-          <span style={{ color: "#666680" }}>Don't have an account?</span>
-          <Link
-            to="/register"
-            className="font-semibold"
-            style={{ color: "#351C75" }}
-          >
-            Create Account
-          </Link>
-        </div>
       </main>
     </div>
   );
