@@ -17,7 +17,10 @@ export const Route = createFileRoute("/drop-parcel/$id")({
       { title: "Drop Parcel · Leapmile" },
       { name: "description", content: "Guided drop journey for courier parcels into a Smart Locker or Cube Robot." },
       { property: "og:title", content: "Drop Parcel · Leapmile" },
-      { property: "og:description", content: "Guided drop journey for courier parcels into a Smart Locker or Cube Robot." },
+      {
+        property: "og:description",
+        content: "Guided drop journey for courier parcels into a Smart Locker or Cube Robot.",
+      },
     ],
   }),
   component: DropParcelPage,
@@ -125,7 +128,7 @@ function LocationCard({ parcel }: { parcel: DropParcel }) {
       <div className="p-4">
         <div className="rounded-2xl bg-[color:var(--primary-soft)]/50 p-4">
           <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground uppercase tracking-wider">
-            <MapPin className="w-3 h-3" /> Detailed location
+            <MapPin className="w-3 h-3" /> Location
           </div>
           <p className="text-sm font-semibold mt-1 leading-snug">{detailed || "Loading location…"}</p>
         </div>
@@ -232,7 +235,6 @@ function DropJourney({
     if (isRobot) return;
     if (!podId || !doorNumber) return;
     if (pollPhase !== "waiting-open" && pollPhase !== "waiting-close") return;
-
 
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
@@ -368,7 +370,6 @@ function DropJourney({
         }
       }
       return true;
-
     } catch {
       return false;
     }
@@ -376,43 +377,41 @@ function DropJourney({
 
   return (
     <div className="mt-4 ios-card p-4">
-      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-1">
-        Drop Journey
-      </p>
+      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-1">Drop Journey</p>
 
       <div ref={stripRef} className="flex items-center gap-1 overflow-x-auto hide-scrollbar pb-1">
         {steps
           .map((s, i) => ({ s, i }))
           .filter((x) => !x.s.hidden)
           .map(({ s, i }, n, arr) => {
-          const done = i < idx;
-          const active = i === idx || (s.key === "open" && steps[idx]?.key === "retrieving");
-          return (
-            <div key={s.key} data-step={i} className="flex items-center gap-1 shrink-0">
-              <div
-                className={cn(
-                  "flex items-center gap-2 px-3 py-2 rounded-full transition-all",
-                  done && "bg-green-50 text-green-700",
-                  active && "brand-gradient text-white shadow-sm",
-                  !done && !active && "bg-muted text-muted-foreground",
-                )}
-              >
+            const done = i < idx;
+            const active = i === idx || (s.key === "open" && steps[idx]?.key === "retrieving");
+            return (
+              <div key={s.key} data-step={i} className="flex items-center gap-1 shrink-0">
                 <div
                   className={cn(
-                    "w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold",
-                    done && "bg-green-500 text-white",
-                    active && "bg-white/25 text-white",
-                    !done && !active && "bg-white text-muted-foreground",
+                    "flex items-center gap-2 px-3 py-2 rounded-full transition-all",
+                    done && "bg-green-50 text-green-700",
+                    active && "brand-gradient text-white shadow-sm",
+                    !done && !active && "bg-muted text-muted-foreground",
                   )}
                 >
-                  {done ? <Check className="w-3 h-3" /> : n + 1}
+                  <div
+                    className={cn(
+                      "w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold",
+                      done && "bg-green-500 text-white",
+                      active && "bg-white/25 text-white",
+                      !done && !active && "bg-white text-muted-foreground",
+                    )}
+                  >
+                    {done ? <Check className="w-3 h-3" /> : n + 1}
+                  </div>
+                  <span className="text-[11px] font-semibold whitespace-nowrap">{s.short}</span>
                 </div>
-                <span className="text-[11px] font-semibold whitespace-nowrap">{s.short}</span>
+                {n < arr.length - 1 && <div className={cn("w-3 h-px", done ? "bg-green-400" : "bg-border")} />}
               </div>
-              {n < arr.length - 1 && <div className={cn("w-3 h-px", done ? "bg-green-400" : "bg-border")} />}
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
 
       <div className="relative mt-4 overflow-hidden">
@@ -439,8 +438,8 @@ function DropJourney({
               desc="The Cube Robot is bringing the drop tray to the station."
             />
           )}
-          {step.key === "open" && (
-            isRobot ? (
+          {step.key === "open" &&
+            (isRobot ? (
               <ActionStage
                 title="Door open — drop the parcel"
                 desc="Place the parcel inside the tray, then confirm below."
@@ -452,8 +451,7 @@ function DropJourney({
                 title="Door open — drop the parcel"
                 desc="Place the parcel inside and close the door. We'll confirm automatically once it's closed."
               />
-            )
-          )}
+            ))}
 
           {step.key === "done" && <SuccessBanner />}
         </div>
@@ -547,7 +545,6 @@ function ActionStage({
   );
 }
 
-
 function SuccessBanner() {
   return (
     <div className="w-full py-8 rounded-2xl bg-green-50 text-green-700 flex flex-col items-center gap-2 animate-pop-in min-h-[240px] justify-center">
@@ -568,9 +565,7 @@ function SummaryCard({ parcel }: { parcel: DropParcel }) {
   ];
   return (
     <div className="mt-4 ios-card p-5">
-      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-        Parcel Summary
-      </p>
+      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-3">Parcel Summary</p>
       <div className="divide-y divide-border/60">
         {rows.map((r) => (
           <div key={r.label} className="flex justify-between py-2.5">
