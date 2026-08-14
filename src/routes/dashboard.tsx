@@ -216,13 +216,21 @@ function CourierDashboard() {
   );
 
   const header = (
-    <header className="flex items-center justify-between">
+    <header
+      className="flex items-center justify-between -mx-4 px-4 py-3 rounded-3xl"
+      style={{
+        backgroundImage: `url(${bgAsset.url})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <div className="min-w-0">
-        <h1 className="text-lg font-semibold truncate">{user?.name.split(" ")[0]}</h1>
+        <h1 className="text-lg font-semibold truncate text-white drop-shadow-sm">{user?.name.split(" ")[0]}</h1>
         <LocationSwitcher phone={user?.regNo} fallback={courierLocText} />
       </div>
       <div className="flex items-center gap-2 shrink-0">
-        <button onClick={() => setOpenProfile(true)} className="haptic-tap w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white text-sm font-semibold" aria-label="Profile">
+        <button onClick={() => setOpenProfile(true)} className="haptic-tap w-10 h-10 rounded-full bg-white/90 flex items-center justify-center text-primary text-sm font-semibold shadow-sm" aria-label="Profile">
           {user?.avatar}
         </button>
       </div>
