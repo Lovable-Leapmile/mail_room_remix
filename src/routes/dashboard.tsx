@@ -181,12 +181,11 @@ function CourierDashboard() {
   const parcels = useMailroom((s) => s.parcels);
   const courierCompany = user?.org?.split("·")[0]?.trim() ?? "";
   const courierPickups = parcels.filter((p) => p.direction === "outgoing" && p.status === "Ready for Pickup" && p.courier === courierCompany);
-  const courierCompleted = parcels.filter((p) => (p.status === "Dropped" || p.status === "Collected" || p.status === "Delivered") && p.courier === courierCompany);
-
   const [openProfile, setOpenProfile] = useState(false);
   const [dropTarget, setDropTarget] = useState<Parcel | null>(null);
   const [showPickups, setShowPickups] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showDrops, setShowDrops] = useState(false);
 
   const { selectedId: dropLocationId } = useUserLocations(user?.regNo);
   const [apiDrops, setApiDrops] = useState<ApiPickup[]>([]);
@@ -202,6 +201,12 @@ function CourierDashboard() {
 
   const courierLoc = useUserLocation(user?.regNo);
   const courierLocText = formatLocation(courierLoc) || user?.org || "";
+
+  const { items: courierHistory, loading: courierHistoryLoading } = usePickupHistory(
+    user?.regNo,
+    refreshTick,
+    "dropby_phone",
+  );
 
   const header = (
     <header className="flex items-center justify-between">
@@ -223,19 +228,24 @@ function CourierDashboard() {
     <Page fixedHeader={header}>
       {/* Drop pendings — highest priority */}
       <section className="mt-6">
-        <div className="flex items-center justify-between px-1 mb-2">
+        <button
+          onClick={() => setShowDrops((v) => !v)}
+          className="haptic-tap w-full bg-white/60 rounded-2xl p-4 flex items-center justify-between shadow-[0_8px_24px_-12px_rgba(53,28,117,0.06)]"
+        >
           <p className="text-sm font-semibold flex items-center gap-1.5">
             <ClipboardList className="w-3.5 h-3.5 text-primary" /> Drop Pendings
           </p>
-          <span className="text-[11px] text-muted-foreground">{apiDrops.length} to drop</span>
-        </div>
-        <div className="space-y-3">
-          {apiDrops.length === 0 ? (
-            <EmptySmall text="No parcels waiting to drop" />
-          ) : (
-            apiDrops.map((r) => <ApiDropCard key={r.id} r={r} />)
-          )}
-        </div>
+          <span className="text-[11px] text-muted-foreground">{apiDrops.length}</span>
+        </button>
+        {showDrops && (
+          <div className="mt-3 space-y-3">
+            {apiDrops.length === 0 ? (
+              <EmptySmall text="No parcels waiting to drop" />
+            ) : (
+              apiDrops.map((r) => <ApiDropCard key={r.id} r={r} />)
+            )}
+          </div>
+        )}
       </section>
 
 
@@ -280,27 +290,31 @@ function CourierDashboard() {
           <p className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5">
             <HistoryIcon className="w-3.5 h-3.5" /> History
           </p>
-          <span className="text-[11px] text-muted-foreground">{courierCompleted.length}</span>
+          <span className="text-[11px] text-muted-foreground">{courierHistory.length}</span>
         </button>
         {showHistory && (
           <div className="mt-3">
-            {courierCompleted.length === 0 ? (
+            {courierHistoryLoading ? (
+              <div className="ios-card p-6 text-center text-xs text-muted-foreground">Loading history…</div>
+            ) : courierHistory.length === 0 ? (
               <div className="ios-card p-6 text-center text-xs text-muted-foreground">No completed activity yet</div>
             ) : (
               <div className="bg-white/60 rounded-2xl overflow-hidden shadow-[0_8px_24px_-12px_rgba(53,28,117,0.06)]">
-                {courierCompleted.map((p, i) => (
-                  <div key={p.id} className={cn("p-4 flex items-start gap-3", i !== courierCompleted.length - 1 && "border-b border-[oklch(0.94_0.012_285)]")}>
+                {courierHistory.map((h, i) => (
+                  <div key={h.id} className={cn("p-4 flex items-start gap-3", i !== courierHistory.length - 1 && "border-b border-[oklch(0.94_0.012_285)]")}>
                     <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
                       <Sparkles className="w-4 h-4 text-green-600" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="font-semibold text-sm truncate">{p.receiver}</p>
-                        <span className="text-[10px] text-muted-foreground shrink-0">{new Date(p.updatedAt).toLocaleDateString()}</span>
+                        <p className="font-semibold text-sm truncate">{h.reservation_type} · {h.pod_name}</p>
+                        <span className="text-[10px] text-muted-foreground shrink-0">{new Date(h.updated_at).toLocaleDateString()}</span>
                       </div>
-                      <p className="text-[11px] text-muted-foreground truncate">{p.trackingId} · {p.storageId}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        {[h.pickupby_name, h.courier_name, h.awb_number].filter(Boolean).join(" · ") || "—"}
+                      </p>
                       <span className="mt-1.5 inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700">
-                        {p.status}
+                        Pickup Completed
                       </span>
                     </div>
                   </div>
