@@ -60,7 +60,7 @@ export function DropHardware({
     })();
   }, [isRobot, podId, doorNumber]);
 
-  // Robot: poll until the tray reaches the station, then open the door.
+  // Robot: poll until the tray reaches the station, then open the door and advance the timeline.
   useEffect(() => {
     if (phase !== "retrieving" || !podId || !doorNumber) return;
     let cancelled = false;
@@ -74,10 +74,14 @@ export function DropHardware({
       const ready = await isTrayReady(tray);
       if (cancelled) return;
       if (ready) {
+        setTrayReady(true);
         await patchDoorStatus(podId, doorNumber, "OPEN");
         if (!cancelled) {
           setPhase("open");
-          onRetrieved?.();
+          if (!onRetrievedCalledRef.current) {
+            onRetrievedCalledRef.current = true;
+            onRetrieved?.();
+          }
         }
         return;
       }
@@ -89,6 +93,7 @@ export function DropHardware({
       if (timer) clearTimeout(timer);
     };
   }, [phase, podId, doorNumber, onRetrieved]);
+
 
   // Locker: poll PubSub for opened / closed events.
   useEffect(() => {
