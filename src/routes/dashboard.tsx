@@ -382,8 +382,8 @@ function ApiPickupCard({ r }: { r: ApiPickup }) {
   const isRobot = /robot/i.test(r.pod_name || "");
   return (
     <Link to="/parcels/$id" params={{ id: String(r.id) }} className="haptic-tap block">
-      <div className="ios-card p-4 flex gap-3">
-        <StorageIcon type={isRobot ? "robot" : "locker"} className="w-12 h-12" imgClassName="w-10 h-10" />
+      <div className="ios-card p-3 flex gap-3">
+        <StorageIcon type={isRobot ? "robot" : "locker"} className="w-10 h-10" imgClassName="w-8 h-8" />
         <div className="flex-1 min-w-0">
           <p className="text-[11px] text-muted-foreground flex items-center gap-1 truncate">
             <User className="w-3 h-3" /> Dropped by {r.created_by_name || "—"}
@@ -395,14 +395,10 @@ function ApiPickupCard({ r }: { r: ApiPickup }) {
           <p className="text-xs text-muted-foreground truncate">
             {r.location_name} · {r.pod_name}
           </p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-[11px] font-semibold px-2 py-1 rounded-full flex items-center gap-1.5 bg-[color:var(--primary-soft)] text-primary">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-              Ready for Pickup
-            </span>
-            <span className="text-[11px] text-muted-foreground">{new Date(r.updated_at).toLocaleDateString()}</span>
-          </div>
         </div>
+        <span className="text-[11px] text-muted-foreground shrink-0 self-start pt-1">
+          {new Date(r.updated_at).toLocaleDateString()}
+        </span>
       </div>
     </Link>
   );
