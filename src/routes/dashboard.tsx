@@ -21,7 +21,7 @@ import { usePickupHistory } from "@/lib/pickup-history";
 import { useUserLocations } from "@/lib/user-locations";
 import { PODCORE_BASE, apiHeaders } from "@/lib/api-config";
 import { useRefreshTick } from "@/lib/refresh";
-import { useHydrated } from "@/hooks/use-hydrated";
+import logoAsset from "@/assets/leapmile_logo.png.asset.json";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard · Leapmile Mailroom" }] }),
@@ -63,7 +63,6 @@ function Dashboard() {
   const [showPendingShipments, setShowPendingShipments] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
-  const hydrated = useHydrated();
 
   const userLoc = useUserLocation(user?.regNo);
   const locText = formatLocation(userLoc) || user?.org || "";
@@ -71,7 +70,7 @@ function Dashboard() {
   const header = (
     <header className="flex items-center justify-between">
       <div className="min-w-0">
-        <h1 className="text-lg font-semibold truncate">{hydrated ? user?.name.split(" ")[0] : <span className="inline-block w-20 h-5 rounded bg-muted animate-pulse" />}</h1>
+        <img src={logoAsset.url} alt="Leapmile" className="h-6 w-auto object-contain" />
         <LocationSwitcher phone={user?.regNo} fallback={locText} />
       </div>
       <div className="flex items-center gap-2 shrink-0">
@@ -210,7 +209,6 @@ function CourierDashboard() {
   const [showPickups, setShowPickups] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showDrops, setShowDrops] = useState(false);
-  const hydrated = useHydrated();
 
   const { selectedId: dropLocationId } = useUserLocations(user?.regNo);
   const [apiDrops, setApiDrops] = useState<ApiPickup[]>([]);
@@ -236,7 +234,7 @@ function CourierDashboard() {
   const header = (
     <header className="flex items-center justify-between">
       <div className="min-w-0">
-        <h1 className="text-lg font-semibold truncate">{hydrated ? user?.name.split(" ")[0] : <span className="inline-block w-20 h-5 rounded bg-muted animate-pulse" />}</h1>
+        <img src={logoAsset.url} alt="Leapmile" className="h-6 w-auto object-contain" />
         <LocationSwitcher phone={user?.regNo} fallback={courierLocText} />
       </div>
       <div className="flex items-center gap-2 shrink-0">
