@@ -26,7 +26,6 @@ type ScannedPod = { pod_id: number; pod_name: string; isRobot: boolean };
 type DropTarget = { podId: number; doorNumber?: number; isRobot: boolean };
 
 const STEPS: { key: Step; short: string }[] = [
-  { key: "locate", short: "Locate Device" },
   { key: "scan", short: "Scan Parcel" },
   { key: "reserve", short: "Reserve Locker" },
   { key: "retrieve", short: "Opening" },
