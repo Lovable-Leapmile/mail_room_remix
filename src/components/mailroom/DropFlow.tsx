@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MapPin, ChevronDown, ChevronRight, User, Phone, Package, CheckCircle2, Loader2, ScanLine } from "lucide-react";
+import { MapPin, ChevronDown, ChevronRight, User, Phone, Package, CheckCircle2, Loader2, ScanLine, ArrowLeft } from "lucide-react";
+import logoAsset from "@/assets/leapmile_logo.png.asset.json";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Page } from "@/components/mailroom/AppShell";
@@ -25,10 +26,10 @@ type ScannedPod = { pod_id: number; pod_name: string; isRobot: boolean };
 type DropTarget = { podId: number; doorNumber?: number; isRobot: boolean };
 
 const STEPS: { key: Step; short: string }[] = [
-  { key: "locate", short: "Locate" },
-  { key: "scan", short: "Scan" },
-  { key: "reserve", short: "Reserve" },
-  { key: "retrieve", short: "Retrieve" },
+  { key: "locate", short: "Locate Device" },
+  { key: "scan", short: "Scan Parcel" },
+  { key: "reserve", short: "Reserve Locker" },
+  { key: "retrieve", short: "Opening" },
   { key: "drop", short: "Drop" },
   { key: "done", short: "Done" },
 ];
@@ -56,7 +57,8 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
   const stripRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = stripRef.current?.querySelector<HTMLElement>(`[data-step="${idx}"]`);
-    el?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    const t = setTimeout(() => el?.scrollIntoView({ behavior: "smooth", block: "center" }), 150);
+    return () => clearTimeout(t);
   }, [idx]);
 
   const verifyPodScan = async (raw: string): Promise<boolean> => {
@@ -159,43 +161,10 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
     setTimeout(() => nav({ to: "/dashboard" }), 2000);
   }, [nav]);
 
-  return (
-    <Page title={title} back hideNav flatHeader>
-      {/* Step strip */}
-      <div className="mt-2 ios-card p-4">
-        <div ref={stripRef} className="flex items-center gap-1 overflow-x-auto hide-scrollbar pb-1">
-          {STEPS.map((s, i) => {
-            const done = i < idx;
-            const active = i === idx;
-            return (
-              <div key={s.key} data-step={i} className="flex items-center gap-1 shrink-0">
-                <div
-                  className={cn(
-                    "flex items-center gap-2 px-3 py-2 rounded-full transition-all",
-                    done && "bg-green-50 text-green-700",
-                    active && "brand-gradient text-white shadow-sm",
-                    !done && !active && "bg-muted text-muted-foreground",
-                  )}
-                >
-                  <div
-                    className={cn(
-                      "w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold",
-                      done && "bg-green-500 text-white",
-                      active && "bg-white/25 text-white",
-                      !done && !active && "bg-white text-muted-foreground",
-                    )}
-                  >
-                    {done ? <CheckCircle2 className="w-3 h-3" /> : i + 1}
-                  </div>
-                  <span className="text-[11px] font-semibold whitespace-nowrap">{s.short}</span>
-                </div>
-                {i < STEPS.length - 1 && <div className={cn("w-3 h-px", done ? "bg-green-400" : "bg-border")} />}
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="mt-4">
+  const stepBody = (key: Step) => {
+    const step = key;
+    return (
+      <>
           {step === "locate" && (
             <div>
               <div className="rounded-2xl bg-[color:var(--primary-soft)]/50 p-5 text-center">
@@ -390,7 +359,70 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
               <p className="text-[11px] text-green-700/70">Returning to dashboard...</p>
             </div>
           )}
+      </>
+    );
+  };
+
+  return (
+    <Page hideNav>
+      <div className="-mx-4 sticky top-0 z-30 pt-safe bg-[color:var(--glass)] border-b border-[color:var(--border)] backdrop-blur-xl">
+        <div className="relative flex items-center justify-center px-3 py-2.5">
+          <button
+            onClick={() => window.history.back()}
+            aria-label="Back"
+            className="haptic-tap absolute left-3 w-7 h-7 rounded-full bg-[color:var(--primary-soft)] flex items-center justify-center"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-primary" />
+          </button>
+          <img src={logoAsset.url} alt="Leapmile" className="h-6 w-auto object-contain" />
         </div>
+      </div>
+
+      <h1 className="mt-4 text-[22px] font-bold tracking-tight">{title}</h1>
+
+      <div ref={stripRef} className="mt-4">
+        {STEPS.map((s, i) => {
+          const done = i < idx;
+          const active = i === idx;
+          const last = i === STEPS.length - 1;
+          return (
+            <div key={s.key} data-step={i} className="flex gap-3">
+              <div className="flex flex-col items-center">
+                <div
+                  className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all duration-300",
+                    done && "bg-green-500 text-white",
+                    active && "brand-gradient text-white shadow-[0_8px_20px_-8px_rgba(53,28,117,0.8)] scale-105",
+                    !done && !active && "bg-muted text-muted-foreground",
+                  )}
+                >
+                  {done ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
+                </div>
+                {!last && (
+                  <div className={cn("w-px flex-1 my-1 transition-colors duration-500", done ? "bg-green-400" : "bg-border")} />
+                )}
+              </div>
+              <div className="flex-1 min-w-0 pb-4">
+                <p
+                  className={cn(
+                    "text-[15px] font-semibold leading-8 transition-colors",
+                    active ? "text-foreground" : done ? "text-green-700" : "text-muted-foreground",
+                  )}
+                >
+                  {s.short}
+                </p>
+                <div
+                  className={cn(
+                    "grid transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]",
+                    active ? "grid-rows-[1fr] opacity-100 mt-2" : "grid-rows-[0fr] opacity-0",
+                  )}
+                >
+                  <div className="overflow-hidden">{active && stepBody(s.key)}</div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </Page>
   );
