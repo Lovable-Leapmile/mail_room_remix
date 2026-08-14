@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
-  ArrowDownLeft,
   Sparkles,
   Truck,
   History as HistoryIcon,
@@ -391,9 +390,8 @@ function ApiPickupCard({ r }: { r: ApiPickup }) {
           <p className="text-[11px] text-muted-foreground flex items-center gap-1 truncate">
             <User className="w-3 h-3" /> Dropped by {r.created_by_name || "—"}
           </p>
-          <div className="flex items-center justify-between gap-2 mt-0.5">
+          <div className="mt-0.5">
             <p className="font-semibold text-sm truncate">{r.reservation_type}</p>
-            <ArrowDownLeft className="w-4 h-4 text-primary shrink-0" />
           </div>
           <p className="text-xs text-muted-foreground truncate">
             {r.location_name} · {r.pod_name}
