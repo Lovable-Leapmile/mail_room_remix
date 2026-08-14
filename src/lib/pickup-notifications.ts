@@ -50,5 +50,5 @@ export function usePickupNotifications(): PickupNotification[] {
 }
 
 export function formatPickupBody(n: PickupNotification): string {
-  return `${n.reservation_type} parcel is in ${n.pod_name}. Pickup OTP is${n.pickup_otp}.`;
+  return `${n.reservation_type} parcel is in ${n.pod_name}. Pickup OTP is ${n.pickup_otp}.`;
 }
