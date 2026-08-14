@@ -25,9 +25,8 @@ export function DropHardware({
   const startedRef = useRef(false);
   const onRetrievedCalledRef = useRef(false);
 
-
-
   // Kick off the hardware call once (robot: retrieve tray, locker: publish open).
+
   useEffect(() => {
     if (startedRef.current) return;
     startedRef.current = true;
