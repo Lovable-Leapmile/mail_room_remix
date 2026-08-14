@@ -74,7 +74,6 @@ export function DropHardware({
       const ready = await isTrayReady(tray);
       if (cancelled) return;
       if (ready) {
-        setTrayReady(true);
         await patchDoorStatus(podId, doorNumber, "OPEN");
         if (!cancelled) {
           setPhase("open");
@@ -85,6 +84,7 @@ export function DropHardware({
         }
         return;
       }
+
       timer = setTimeout(poll, 2000);
     };
     timer = setTimeout(poll, 1500);
