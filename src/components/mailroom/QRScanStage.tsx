@@ -108,7 +108,7 @@ export function QRScanStage({
   }, [onScanned, verifyScan, attempt]);
 
   return (
-    <div className="rounded-2xl overflow-hidden bg-black relative aspect-[3/4] w-full max-w-[340px] mx-auto">
+    <div className="rounded-2xl overflow-hidden bg-black relative aspect-[3/4] w-full max-w-[280px] mx-auto">
       <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover object-center" muted playsInline />
       <canvas ref={canvasRef} className="hidden" />
       <div className="absolute inset-0 bg-black/30" />
