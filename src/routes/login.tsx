@@ -46,10 +46,10 @@ function LoginPage() {
   const buttonLabel = loading
     ? "Logging in…"
     : detected === "courier"
-    ? "Login as Courier"
-    : detected === "employee"
-    ? "Login as Employee"
-    : "Login";
+      ? "Login as Courier"
+      : detected === "employee"
+        ? "Login as Employee"
+        : "Login";
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +65,6 @@ function LoginPage() {
     }
   };
 
-
   return (
     <div
       className="app-shell flex flex-col min-h-dvh"
@@ -77,19 +76,9 @@ function LoginPage() {
       }}
     >
       {/* Compact top branding band */}
-      <header
-        className="relative w-full flex flex-col items-center justify-center pt-10 pb-6"
-      >
-
-        <img
-          src={logoAsset.url}
-          alt="Leapmile"
-          className="w-32 h-auto object-contain"
-        />
-        <p
-          className="mt-4 font-semibold tracking-wide"
-          style={{ color: "#666680", fontSize: 22 }}
-        >
+      <header className="relative w-full flex flex-col items-center justify-center pt-10 pb-6">
+        <img src={logoAsset.url} alt="Leapmile" className="w-32 h-auto object-contain" />
+        <p className="mt-4 font-semibold tracking-wide" style={{ color: "#666680", fontSize: 22 }}>
           Digital Mailroom
         </p>
       </header>
@@ -98,12 +87,8 @@ function LoginPage() {
       <main className="flex-1 flex flex-col px-6 pt-8">
         <form onSubmit={submit} className="mt-4 flex flex-col w-full max-w-[340px] mx-auto">
           {/* Mobile number */}
-          <label
-            htmlFor="reg"
-            className="text-[14px] font-medium"
-            style={{ color: "#1F1F3A" }}
-          >
-            Registered Mobile Number
+          <label htmlFor="reg" className="text-[14px] font-medium" style={{ color: "#1F1F3A" }}>
+            Mobile Number
           </label>
           <div className="mt-3">
             <input
@@ -125,10 +110,7 @@ function LoginPage() {
                 fontSize: 15,
                 color: "#1F1F3A",
                 border: `1px solid ${focused === "reg" ? "#351C75" : "#E5E7F0"}`,
-                boxShadow:
-                  focused === "reg"
-                    ? "0 0 0 4px rgba(53, 28, 117, 0.10)"
-                    : "0 1px 2px rgba(31, 31, 58, 0.03)",
+                boxShadow: focused === "reg" ? "0 0 0 4px rgba(53, 28, 117, 0.10)" : "0 1px 2px rgba(31, 31, 58, 0.03)",
               }}
             />
             {trimmedReg.length === 10 && detecting && (
@@ -139,11 +121,7 @@ function LoginPage() {
           </div>
 
           {/* Password */}
-          <label
-            htmlFor="pw"
-            className="text-[14px] font-medium mt-6"
-            style={{ color: "#1F1F3A" }}
-          >
+          <label htmlFor="pw" className="text-[14px] font-medium mt-6" style={{ color: "#1F1F3A" }}>
             Password
           </label>
           <div className="mt-3 relative">
@@ -165,10 +143,7 @@ function LoginPage() {
                 fontSize: 15,
                 color: "#1F1F3A",
                 border: `1px solid ${focused === "pw" ? "#351C75" : "#E5E7F0"}`,
-                boxShadow:
-                  focused === "pw"
-                    ? "0 0 0 4px rgba(53, 28, 117, 0.10)"
-                    : "0 1px 2px rgba(31, 31, 58, 0.03)",
+                boxShadow: focused === "pw" ? "0 0 0 4px rgba(53, 28, 117, 0.10)" : "0 1px 2px rgba(31, 31, 58, 0.03)",
               }}
             />
             <button
@@ -212,7 +187,6 @@ function LoginPage() {
             {buttonLabel}
           </button>
         </form>
-
       </main>
     </div>
   );
