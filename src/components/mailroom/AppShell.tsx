@@ -71,12 +71,6 @@ function NotificationsSheet({ open, onClose }: { open: boolean; onClose: () => v
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={markAllRead}
-                className="text-xs font-semibold text-primary px-3 py-1.5 rounded-full bg-[color:var(--primary-soft)]"
-              >
-                Mark all
-              </button>
-              <button
                 onClick={onClose}
                 className="haptic-tap w-9 h-9 rounded-full bg-[color:var(--primary-soft)] flex items-center justify-center"
                 aria-label="Close"
