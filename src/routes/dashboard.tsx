@@ -1,13 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import {
-  ArrowUpRight,
-  Sparkles,
-  Truck,
-  History as HistoryIcon,
-  User,
-  ClipboardList,
-} from "lucide-react";
+import { ArrowUpRight, Sparkles, Truck, History as HistoryIcon, User, ClipboardList } from "lucide-react";
 import { useMailroom, type Parcel } from "@/lib/mailroom";
 import { cn } from "@/lib/utils";
 import { Page, ProfileSheet } from "@/components/mailroom/AppShell";
@@ -258,7 +251,7 @@ function CourierDashboard() {
           className="haptic-tap w-full bg-white/60 rounded-2xl p-4 flex items-center justify-between shadow-[0_8px_24px_-12px_rgba(53,28,117,0.06)]"
         >
           <p className="text-sm font-semibold flex items-center gap-1.5">
-            <ClipboardList className="w-3.5 h-3.5 text-primary" /> Drop Pendings
+            <ClipboardList className="w-3.5 h-3.5 text-primary" /> Drop Pending
           </p>
           <span className="text-[11px] text-muted-foreground">{apiDrops.length}</span>
         </button>
@@ -282,7 +275,7 @@ function CourierDashboard() {
           className="haptic-tap w-full bg-white/60 rounded-2xl p-4 flex items-center justify-between shadow-[0_8px_24px_-12px_rgba(53,28,117,0.06)]"
         >
           <p className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5">
-            <Truck className="w-3.5 h-3.5" /> Pickup Pendings
+            <Truck className="w-3.5 h-3.5" /> Pickup Pending
           </p>
           <span className="text-[11px] text-muted-foreground">{courierPickups.length}</span>
         </button>
