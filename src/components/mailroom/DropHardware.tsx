@@ -12,11 +12,13 @@ export function DropHardware({
   podId,
   doorNumber,
   onDone,
+  onRetrieved,
 }: {
   isRobot: boolean;
   podId?: number;
   doorNumber?: number;
   onDone: () => void;
+  onRetrieved?: () => void;
 }) {
   const [phase, setPhase] = useState<Phase>("starting");
   const trayRef = useRef<string | null>(null);
@@ -26,7 +28,6 @@ export function DropHardware({
   useEffect(() => {
     if (startedRef.current) return;
     startedRef.current = true;
-    let cancelled = false;
     (async () => {
       if (!podId || !doorNumber) {
         toast.error("Storage details missing for this reservation.");
@@ -35,7 +36,6 @@ export function DropHardware({
       if (isRobot) {
         setPhase("retrieving");
         const tray = await fetchDoorState(podId, doorNumber);
-        if (cancelled) return;
         trayRef.current = tray;
         if (!tray) {
           toast.error("Could not read the drop tray for this pod.");
@@ -55,9 +55,6 @@ export function DropHardware({
         }
       }
     })();
-    return () => {
-      cancelled = true;
-    };
   }, [isRobot, podId, doorNumber]);
 
   // Robot: poll until the tray reaches the station, then open the door.
@@ -75,7 +72,10 @@ export function DropHardware({
       if (cancelled) return;
       if (ready) {
         await patchDoorStatus(podId, doorNumber, "OPEN");
-        if (!cancelled) setPhase("open");
+        if (!cancelled) {
+          setPhase("open");
+          onRetrieved?.();
+        }
         return;
       }
       timer = setTimeout(poll, 2000);
@@ -85,7 +85,7 @@ export function DropHardware({
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [phase, podId, doorNumber]);
+  }, [phase, podId, doorNumber, onRetrieved]);
 
   // Locker: poll PubSub for opened / closed events.
   useEffect(() => {
@@ -121,7 +121,10 @@ export function DropHardware({
         const payload = JSON.stringify(records).toLowerCase();
         if (phase === "waiting-open" && payload.includes("opened")) {
           await patchStatus("OPEN");
-          if (!cancelled) setPhase("waiting-close");
+          if (!cancelled) {
+            setPhase("waiting-close");
+            onRetrieved?.();
+          }
           return;
         }
         if (phase === "waiting-close" && payload.includes("closed")) {
@@ -142,7 +145,7 @@ export function DropHardware({
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [isRobot, phase, podId, doorNumber, onDone]);
+  }, [isRobot, phase, podId, doorNumber, onDone, onRetrieved]);
 
   const confirmDropped = async () => {
     if (podId && doorNumber) {
