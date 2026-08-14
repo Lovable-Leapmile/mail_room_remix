@@ -23,8 +23,10 @@ export function DropHardware({
   const [phase, setPhase] = useState<Phase>("starting");
   const trayRef = useRef<string | null>(null);
   const startedRef = useRef(false);
+  const onRetrievedCalledRef = useRef(false);
 
   // Kick off the hardware call once (robot: retrieve tray, locker: publish open).
+
   useEffect(() => {
     if (startedRef.current) return;
     startedRef.current = true;
@@ -57,7 +59,7 @@ export function DropHardware({
     })();
   }, [isRobot, podId, doorNumber]);
 
-  // Robot: poll until the tray reaches the station, then open the door.
+  // Robot: poll until the tray reaches the station, then open the door and advance the timeline.
   useEffect(() => {
     if (phase !== "retrieving" || !podId || !doorNumber) return;
     let cancelled = false;
@@ -74,10 +76,14 @@ export function DropHardware({
         await patchDoorStatus(podId, doorNumber, "OPEN");
         if (!cancelled) {
           setPhase("open");
-          onRetrieved?.();
+          if (!onRetrievedCalledRef.current) {
+            onRetrievedCalledRef.current = true;
+            onRetrieved?.();
+          }
         }
         return;
       }
+
       timer = setTimeout(poll, 2000);
     };
     timer = setTimeout(poll, 1500);
