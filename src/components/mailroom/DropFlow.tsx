@@ -338,7 +338,7 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
 
   return (
     <Page hideNav>
-      <div className="-mx-4 sticky top-0 z-30 pt-safe bg-[color:var(--glass)] border-b border-[color:var(--border)] backdrop-blur-xl">
+      <div className="-mx-4 -mt-4 sticky top-0 z-30 bg-[color:var(--glass)] border-b border-[color:var(--border)] backdrop-blur-xl">
         <div className="relative flex items-center justify-center px-3 py-2.5">
           <button
             onClick={() => window.history.back()}
@@ -351,7 +351,13 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
         </div>
       </div>
 
-      <h1 className="mt-4 text-[22px] font-bold tracking-tight">{title}</h1>
+      <div className="mt-4 flex items-center justify-between gap-3">
+        <h1 className="text-[22px] font-bold tracking-tight">{title}</h1>
+        <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+          <MapPin className="w-3 h-3 text-primary shrink-0" />
+          <span className="truncate max-w-[140px]">{formatUserLocation(selected) || "—"}</span>
+        </div>
+      </div>
 
       <div ref={stripRef} className="mt-4">
         {STEPS.map((s, i) => {
