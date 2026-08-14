@@ -211,6 +211,7 @@ function CourierDashboard() {
   const [showPickups, setShowPickups] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showDrops, setShowDrops] = useState(false);
+  const hydrated = useHydrated();
 
   const { selectedId: dropLocationId } = useUserLocations(user?.regNo);
   const [apiDrops, setApiDrops] = useState<ApiPickup[]>([]);
