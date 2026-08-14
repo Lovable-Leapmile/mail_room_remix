@@ -24,7 +24,10 @@ export const Route = createFileRoute("/drop-new")({
       { title: "New Drop · Leapmile" },
       { name: "description", content: "Locate the device, scan it and create the parcel reservation before dropping." },
       { property: "og:title", content: "New Drop · Leapmile" },
-      { property: "og:description", content: "Locate the device, scan it and create the parcel reservation before dropping." },
+      {
+        property: "og:description",
+        content: "Locate the device, scan it and create the parcel reservation before dropping.",
+      },
     ],
   }),
   component: NewDropPage,
@@ -113,7 +116,12 @@ function NewDropPage() {
       reservationType: resType,
       podId: String(pod.pod_id),
     });
-    createReservation({ awb, receiverName: picked.user_name, receiverPhone: picked.user_phone, courier: courierCompany });
+    createReservation({
+      awb,
+      receiverName: picked.user_name,
+      receiverPhone: picked.user_phone,
+      courier: courierCompany,
+    });
     triggerRefresh();
 
     // Look up the freshly created reservation to get the assigned door.
@@ -205,7 +213,7 @@ function NewDropPage() {
                 </div>
                 <p className="mt-3 font-semibold text-sm">Locate the device</p>
                 <p className="mt-1 text-xs text-muted-foreground max-w-[280px] mx-auto">
-                  Walk to the Smart Locker or Cube Robot at your location. You can reserve the parcel only once you're at the device.
+                  Walk to the Robot at your location. You can reserve the parcel only once you're at the device.
                 </p>
                 <div className="mt-4 rounded-2xl bg-white px-4 py-3 text-left flex items-center gap-3">
                   <MapPin className="w-4 h-4 text-primary shrink-0" />
@@ -263,7 +271,10 @@ function NewDropPage() {
               <div className="relative">
                 <button
                   type="button"
-                  onClick={() => { setUserOpen((v) => !v); setTypeOpen(false); }}
+                  onClick={() => {
+                    setUserOpen((v) => !v);
+                    setTypeOpen(false);
+                  }}
                   className="haptic-tap w-full rounded-2xl border border-border bg-white px-4 py-3 flex items-center gap-3 text-left"
                 >
                   <User className="w-4 h-4 text-primary shrink-0" />
@@ -285,7 +296,10 @@ function NewDropPage() {
                     {users.map((u) => (
                       <button
                         key={u.user_phone}
-                        onClick={() => { setPicked(u); setUserOpen(false); }}
+                        onClick={() => {
+                          setPicked(u);
+                          setUserOpen(false);
+                        }}
                         className={cn(
                           "w-full text-left px-4 py-3 haptic-tap flex items-center justify-between gap-2",
                           picked?.user_phone === u.user_phone && "bg-[color:var(--primary-soft)]",
@@ -295,7 +309,9 @@ function NewDropPage() {
                           <span className="block text-xs font-semibold truncate">{u.user_name}</span>
                           <span className="block text-[11px] text-muted-foreground">{u.user_phone}</span>
                         </span>
-                        {picked?.user_phone === u.user_phone && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
+                        {picked?.user_phone === u.user_phone && (
+                          <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                        )}
                       </button>
                     ))}
                   </div>
@@ -306,7 +322,9 @@ function NewDropPage() {
                 <div className="rounded-2xl bg-[color:var(--primary-soft)]/40 px-4 py-3 flex items-center gap-3">
                   <Phone className="w-4 h-4 text-primary shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Mobile Number</p>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                      Mobile Number
+                    </p>
                     <p className="mt-0.5 text-sm font-semibold truncate">{picked.user_phone}</p>
                   </div>
                 </div>
@@ -316,12 +334,17 @@ function NewDropPage() {
               <div className="relative">
                 <button
                   type="button"
-                  onClick={() => { setTypeOpen((v) => !v); setUserOpen(false); }}
+                  onClick={() => {
+                    setTypeOpen((v) => !v);
+                    setUserOpen(false);
+                  }}
                   className="haptic-tap w-full rounded-2xl border border-border bg-white px-4 py-3 flex items-center gap-3 text-left"
                 >
                   <Package className="w-4 h-4 text-primary shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Reservation Type</p>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                      Reservation Type
+                    </p>
                     <p className="mt-0.5 text-sm font-semibold truncate">{resType || "Select type"}</p>
                   </div>
                   <ChevronDown className={cn("w-4 h-4 text-primary transition-transform", typeOpen && "rotate-180")} />
@@ -331,7 +354,10 @@ function NewDropPage() {
                     {RESERVATION_TYPES.map((t) => (
                       <button
                         key={t}
-                        onClick={() => { setResType(t); setTypeOpen(false); }}
+                        onClick={() => {
+                          setResType(t);
+                          setTypeOpen(false);
+                        }}
                         className={cn(
                           "w-full text-left px-4 py-3 text-xs font-semibold haptic-tap flex items-center justify-between",
                           resType === t && "bg-[color:var(--primary-soft)]",
