@@ -30,7 +30,7 @@ export const Route = createFileRoute("/drop-new")({
   component: NewDropPage,
 });
 
-type Step = "locate" | "scan" | "reserve" | "drop" | "done";
+type Step = "locate" | "scan" | "reserve" | "retrieve" | "drop" | "done";
 
 type ScannedPod = { pod_id: number; pod_name: string; isRobot: boolean };
 
@@ -40,6 +40,7 @@ const STEPS: { key: Step; short: string }[] = [
   { key: "locate", short: "Locate" },
   { key: "scan", short: "Scan" },
   { key: "reserve", short: "Reserve" },
+  { key: "retrieve", short: "Retrieve" },
   { key: "drop", short: "Drop" },
   { key: "done", short: "Done" },
 ];
@@ -147,8 +148,10 @@ function NewDropPage() {
       doorNumber: rec.door_number,
       isRobot: rec?.pod_name ? /robot/i.test(String(rec.pod_name)) : pod.isRobot,
     });
-    setStep("drop");
+    setStep("retrieve");
   };
+
+  const handleRetrieved = useCallback(() => setStep("drop"), []);
 
   const finishDrop = useCallback(() => {
     setStep("done");
@@ -353,12 +356,13 @@ function NewDropPage() {
             </div>
           )}
 
-          {step === "drop" && target && (
+          {(step === "retrieve" || step === "drop") && target && (
             <DropHardware
               isRobot={target.isRobot}
               podId={target.podId}
               doorNumber={target.doorNumber}
               onDone={finishDrop}
+              onRetrieved={handleRetrieved}
             />
           )}
 
