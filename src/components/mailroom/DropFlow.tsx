@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MapPin, ChevronDown, ChevronRight, User, Phone, Package, CheckCircle2, Loader2, ScanLine } from "lucide-react";
+import { MapPin, ChevronDown, ChevronRight, User, Phone, Package, CheckCircle2, Loader2, ScanLine, ArrowLeft } from "lucide-react";
+import logoAsset from "@/assets/leapmile_logo.png.asset.json";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Page } from "@/components/mailroom/AppShell";
@@ -56,7 +57,8 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
   const stripRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = stripRef.current?.querySelector<HTMLElement>(`[data-step="${idx}"]`);
-    el?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    const t = setTimeout(() => el?.scrollIntoView({ behavior: "smooth", block: "center" }), 150);
+    return () => clearTimeout(t);
   }, [idx]);
 
   const verifyPodScan = async (raw: string): Promise<boolean> => {
