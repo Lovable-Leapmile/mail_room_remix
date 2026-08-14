@@ -397,9 +397,7 @@ function ApiPickupCard({ r }: { r: ApiPickup }) {
           </p>
           <div className="flex items-center justify-between mt-2">
             <span className="text-[11px] font-semibold px-2 py-1 rounded-full flex items-center gap-1.5 bg-[color:var(--primary-soft)] text-primary">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-              Ready for Pickup
-            </span>
+              
             <span className="text-[11px] text-muted-foreground">{new Date(r.updated_at).toLocaleDateString()}</span>
           </div>
         </div>
