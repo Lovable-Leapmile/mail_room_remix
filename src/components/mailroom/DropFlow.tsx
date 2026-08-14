@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MapPin, ChevronDown, ChevronRight, User, Phone, Package, CheckCircle2, Loader2, ScanLine } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -52,6 +52,12 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
   const [target, setTarget] = useState<DropTarget | null>(null);
 
   const idx = STEPS.findIndex((s) => s.key === step);
+
+  const stripRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = stripRef.current?.querySelector<HTMLElement>(`[data-step="${idx}"]`);
+    el?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }, [idx]);
 
   const verifyPodScan = async (raw: string): Promise<boolean> => {
     const value = (raw || "").trim();
@@ -157,12 +163,12 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
     <Page title={title} back hideNav flatHeader>
       {/* Step strip */}
       <div className="mt-2 ios-card p-4">
-        <div className="flex items-center gap-1 overflow-x-auto hide-scrollbar pb-1">
+        <div ref={stripRef} className="flex items-center gap-1 overflow-x-auto hide-scrollbar pb-1">
           {STEPS.map((s, i) => {
             const done = i < idx;
             const active = i === idx;
             return (
-              <div key={s.key} className="flex items-center gap-1 shrink-0">
+              <div key={s.key} data-step={i} className="flex items-center gap-1 shrink-0">
                 <div
                   className={cn(
                     "flex items-center gap-2 px-3 py-2 rounded-full transition-all",
