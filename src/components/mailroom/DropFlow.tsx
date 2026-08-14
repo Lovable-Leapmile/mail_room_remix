@@ -27,8 +27,8 @@ type ScannedPod = { pod_id: number; pod_name: string; isRobot: boolean };
 type DropTarget = { podId: number; doorNumber?: number; isRobot: boolean };
 
 const STEPS: { key: Step; short: string }[] = [
-  { key: "scan", short: "Scan Parcel" },
-  { key: "reserve", short: "Reserve Locker" },
+  { key: "scan", short: "Scan" },
+  { key: "reserve", short: "Parcel Details" },
   { key: "retrieve", short: "Opening" },
   { key: "drop", short: "Drop" },
   { key: "done", short: "Done" },
@@ -180,36 +180,21 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
 
               <FieldButton
                 icon={<ScanLine className="w-4 h-4 text-primary shrink-0" />}
-                label="AWB Number"
-                value={awb || "Scan or enter AWB"}
+                value={awb || "Enter AWB Number"}
                 filled={!!awb}
                 onClick={() => setModal("awb")}
               />
 
               <FieldButton
                 icon={<User className="w-4 h-4 text-primary shrink-0" />}
-                label="Employee"
-                value={picked ? picked.user_name : loadingUsers ? "Loading employees…" : "Select employee"}
+                value={picked ? picked.user_name : loadingUsers ? "Loading employees…" : "Select Employee"}
                 filled={!!picked}
                 onClick={() => setModal("user")}
               />
 
-              {picked && (
-                <div className="rounded-2xl bg-[color:var(--primary-soft)]/40 px-4 py-3 flex items-center gap-3">
-                  <Phone className="w-4 h-4 text-primary shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-                      Mobile Number
-                    </p>
-                    <p className="mt-0.5 text-sm font-semibold truncate">{picked.user_phone}</p>
-                  </div>
-                </div>
-              )}
-
               <FieldButton
                 icon={<Package className="w-4 h-4 text-primary shrink-0" />}
-                label="Reservation Type"
-                value={resType || "Select type"}
+                value={resType || "Select Reservation Type"}
                 filled={!!resType}
                 onClick={() => setModal("type")}
               />
@@ -308,13 +293,11 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
 
 function FieldButton({
   icon,
-  label,
   value,
   filled,
   onClick,
 }: {
   icon: React.ReactNode;
-  label: string;
   value: string;
   filled: boolean;
   onClick: () => void;
@@ -330,8 +313,7 @@ function FieldButton({
     >
       {icon}
       <div className="flex-1 min-w-0">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{label}</p>
-        <p className={cn("mt-0.5 text-sm font-semibold truncate", !filled && "text-muted-foreground")}>{value}</p>
+        <p className={cn("text-sm font-semibold truncate", !filled && "text-muted-foreground")}>{value}</p>
       </div>
       {filled ? <CheckCircle2 className="w-4 h-4 text-primary shrink-0" /> : <ChevronRight className="w-4 h-4 text-primary shrink-0" />}
     </button>
@@ -384,12 +366,11 @@ function AwbModal({
       <div className="mt-4 rounded-2xl border border-border bg-white px-4 py-3 flex items-center gap-3 focus-within:border-primary">
         <ScanLine className="w-4 h-4 text-primary shrink-0" />
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">AWB Number</p>
           <input
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            placeholder="Enter AWB manually"
-            className="mt-0.5 w-full bg-transparent outline-none text-sm font-semibold"
+            placeholder="Enter AWB Number"
+            className="w-full bg-transparent outline-none text-sm font-semibold"
           />
         </div>
       </div>
@@ -448,7 +429,6 @@ function UserModal({
             className="haptic-tap w-full text-left px-4 py-3 rounded-2xl border border-border bg-white"
           >
             <span className="block text-sm font-semibold truncate">{u.user_name}</span>
-            <span className="block text-[11px] text-muted-foreground">{u.user_phone}</span>
           </button>
         ))}
       </div>
