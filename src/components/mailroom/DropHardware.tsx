@@ -24,6 +24,13 @@ export function DropHardware({
   const trayRef = useRef<string | null>(null);
   const startedRef = useRef(false);
   const onRetrievedCalledRef = useRef(false);
+  const openedRef = useRef(false);
+
+  // Keep latest callbacks in refs so effects don't restart (and re-fire APIs) on re-render.
+  const onDoneRef = useRef(onDone);
+  const onRetrievedRef = useRef(onRetrieved);
+  onDoneRef.current = onDone;
+  onRetrievedRef.current = onRetrieved;
 
   // Kick off the hardware call once (robot: retrieve tray, locker: publish open).
 
@@ -73,13 +80,13 @@ export function DropHardware({
       const ready = await isTrayReady(tray);
       if (cancelled) return;
       if (ready) {
+        if (openedRef.current) return;
+        openedRef.current = true;
         await patchDoorStatus(podId, doorNumber, "OPEN");
-        if (!cancelled) {
-          setPhase("open");
-          if (!onRetrievedCalledRef.current) {
-            onRetrievedCalledRef.current = true;
-            onRetrieved?.();
-          }
+        setPhase("open");
+        if (!onRetrievedCalledRef.current) {
+          onRetrievedCalledRef.current = true;
+          onRetrievedRef.current?.();
         }
         return;
       }
@@ -91,7 +98,7 @@ export function DropHardware({
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [phase, podId, doorNumber, onRetrieved]);
+  }, [phase, podId, doorNumber]);
 
   // Locker: poll PubSub for opened / closed events.
   useEffect(() => {
@@ -126,10 +133,13 @@ export function DropHardware({
               : [];
         const payload = JSON.stringify(records).toLowerCase();
         if (phase === "waiting-open" && payload.includes("opened")) {
+          if (openedRef.current) return;
+          openedRef.current = true;
           await patchStatus("OPEN");
-          if (!cancelled) {
-            setPhase("waiting-close");
-            onRetrieved?.();
+          setPhase("waiting-close");
+          if (!onRetrievedCalledRef.current) {
+            onRetrievedCalledRef.current = true;
+            onRetrievedRef.current?.();
           }
           return;
         }
@@ -137,7 +147,7 @@ export function DropHardware({
           await patchStatus("CLOSED");
           if (!cancelled) {
             setPhase("done");
-            onDone();
+            onDoneRef.current();
           }
           return;
         }
@@ -151,7 +161,7 @@ export function DropHardware({
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [isRobot, phase, podId, doorNumber, onDone, onRetrieved]);
+  }, [isRobot, phase, podId, doorNumber]);
 
   const confirmDropped = async () => {
     if (podId && doorNumber) {
@@ -159,7 +169,7 @@ export function DropHardware({
       await patchDoorStatus(podId, doorNumber, "CLOSED");
     }
     setPhase("done");
-    onDone();
+    onDoneRef.current();
   };
 
   if (phase === "starting" || phase === "retrieving") {
