@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { MapPin, CheckCircle2, Loader2, HelpCircle, X, Check, QrCode, Camera } from "lucide-react";
+import { MapPin, CheckCircle2, Loader2, HelpCircle, X, Check, QrCode, Camera, ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import jsQR from "jsqr";
 import { useMailroom, updateParcel } from "@/lib/mailroom";
@@ -11,6 +11,7 @@ import { StepTimeline } from "@/components/mailroom/StepTimeline";
 import { StorageIcon } from "@/components/mailroom/StorageIcon";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import logoAsset from "@/assets/leapmile_logo.png.asset.json";
 
 export const Route = createFileRoute("/parcels/$id")({
   head: () => ({ meta: [{ title: "Pickup · Leapmile" }] }),
