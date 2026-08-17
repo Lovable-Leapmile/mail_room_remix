@@ -130,8 +130,32 @@ function ParcelDetail() {
     parcel.status === "Stored in Smart Locker" ||
     parcel.status === "Stored in Cube Robot";
 
+  const loc = usePodLocation(parcel.podId);
+  const locationText = formatLocation(loc);
+
   return (
-    <Page title="Parcel Pickup" back hideNav flatHeader>
+    <Page hideNav>
+      <div className="-mx-4 -mt-4 sticky top-0 z-30 bg-[color:var(--glass)] border-b border-[color:var(--border)] backdrop-blur-xl">
+        <div className="relative flex items-center justify-center px-3 py-2.5">
+          <button
+            onClick={() => window.history.back()}
+            aria-label="Back"
+            className="haptic-tap absolute left-3 w-7 h-7 rounded-full bg-[color:var(--primary-soft)] flex items-center justify-center"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-primary" />
+          </button>
+          <img src={logoAsset.url} alt="Leapmile" className="h-6 w-auto object-contain" />
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between gap-3">
+        <h1 className="text-[22px] font-bold tracking-tight">Parcel Pickup</h1>
+        <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+          <MapPin className="w-3 h-3 text-primary shrink-0" />
+          <span className="truncate max-w-[140px]">{locationText || "—"}</span>
+        </div>
+      </div>
+
       <LocationCard parcel={parcel} />
 
       {canPickup ? (
@@ -164,8 +188,6 @@ function ParcelDetail() {
 
 function LocationCard({ parcel }: { parcel: DisplayParcel }) {
   const isRobot = parcel.storageType === "robot";
-  const loc = usePodLocation(parcel.podId);
-  const detailed = formatLocation(loc);
   return (
     <div className="mt-2 ios-card overflow-hidden">
       <div className="brand-gradient p-5 text-white">
@@ -179,14 +201,6 @@ function LocationCard({ parcel }: { parcel: DisplayParcel }) {
             </p>
             <p className="text-lg font-semibold truncate">{parcel.storageId}</p>
           </div>
-        </div>
-      </div>
-      <div className="p-4">
-        <div className="rounded-2xl bg-[color:var(--primary-soft)]/50 p-4">
-          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground uppercase tracking-wider">
-            <MapPin className="w-3 h-3" /> Location
-          </div>
-          <p className="text-sm font-semibold mt-1 leading-snug">{detailed || "Loading location…"}</p>
         </div>
       </div>
     </div>
