@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { MapPin, CheckCircle2, Loader2, HelpCircle, X, Check, QrCode, Camera } from "lucide-react";
+import { MapPin, CheckCircle2, Loader2, HelpCircle, X, Check, QrCode, Camera, ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import jsQR from "jsqr";
+import logoAsset from "@/assets/leapmile_logo.png.asset.json";
 import { useMailroom, updateParcel } from "@/lib/mailroom";
 import { usePodLocation, formatLocation } from "@/lib/locations";
 import { PODCORE_BASE, PUBSUB_BASE, apiHeaders } from "@/lib/api-config";
