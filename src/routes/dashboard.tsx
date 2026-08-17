@@ -4,7 +4,6 @@ import { ArrowUpRight, Sparkles, Truck, History as HistoryIcon, User, ClipboardL
 import { useMailroom, type Parcel } from "@/lib/mailroom";
 import { cn } from "@/lib/utils";
 import { Page, ProfileSheet } from "@/components/mailroom/AppShell";
-import { ParcelCard } from "@/components/mailroom/ParcelCard";
 import { OutgoingParcelCard } from "@/components/mailroom/OutgoingParcelCard";
 import { StorageIcon } from "@/components/mailroom/StorageIcon";
 import { DropParcelSheet } from "@/components/mailroom/DropParcelSheet";
