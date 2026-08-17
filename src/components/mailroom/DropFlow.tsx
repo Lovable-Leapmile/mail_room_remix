@@ -40,7 +40,11 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
   const courierPhone = user?.regNo ?? "";
   const courierCompany = user?.org?.split("·")[0]?.trim() ?? "Courier";
   const { selected } = useUserLocations(courierPhone);
-  const { users, loading: loadingUsers } = useLocationUsers(selected?.location_id ?? null);
+  const isEmployeeFlow = title === "Send Parcel";
+  const userType = isEmployeeFlow ? "delivery" : "customer";
+  const userLabel = isEmployeeFlow ? "Courier" : "Employee";
+  const userLabelLower = isEmployeeFlow ? "courier" : "employee";
+  const { users, loading: loadingUsers } = useLocationUsers(selected?.location_id ?? null, userType);
 
   const [step, setStep] = useState<Step>("scan");
   const [pod, setPod] = useState<ScannedPod | null>(null);
@@ -187,7 +191,7 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
 
               <FieldButton
                 icon={<User className="w-4 h-4 text-primary shrink-0" />}
-                value={picked ? picked.user_name : loadingUsers ? "Loading employees…" : "Select Employee"}
+                value={picked ? picked.user_name : loadingUsers ? `Loading ${userLabelLower}s…` : `Select ${userLabel}`}
                 filled={!!picked}
                 onClick={() => setModal("user")}
               />
@@ -213,6 +217,8 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
                 <UserModal
                   users={users}
                   loading={loadingUsers}
+                  label={userLabel}
+                  labelLower={userLabelLower}
                   onClose={() => setModal(null)}
                   onPick={(u) => {
                     setPicked(u);
@@ -388,18 +394,22 @@ function AwbModal({
 function UserModal({
   users,
   loading,
+  label,
+  labelLower,
   onClose,
   onPick,
 }: {
   users: LocationUser[];
   loading: boolean;
+  label: string;
+  labelLower: string;
   onClose: () => void;
   onPick: (u: LocationUser) => void;
 }) {
   const [digits, setDigits] = useState("");
   const matches = digits.length === 4 ? users.filter((u) => u.user_phone.replace(/\D/g, "").endsWith(digits)) : [];
   return (
-    <Modal title="Select Employee" onClose={onClose}>
+    <Modal title={`Select ${label}`} onClose={onClose}>
       <div className="rounded-2xl border border-border bg-white px-4 py-3">
         <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
           Last 4 digits of mobile number
@@ -415,12 +425,12 @@ function UserModal({
       </div>
 
       <div className="mt-4 space-y-2">
-        {loading && <p className="text-xs text-muted-foreground">Loading employees…</p>}
+        {loading && <p className="text-xs text-muted-foreground">Loading {labelLower}s…</p>}
         {!loading && digits.length < 4 && (
-          <p className="text-xs text-muted-foreground">Enter the last 4 digits to find the employee.</p>
+          <p className="text-xs text-muted-foreground">Enter the last 4 digits to find the {labelLower}.</p>
         )}
         {!loading && digits.length === 4 && matches.length === 0 && (
-          <p className="text-xs text-muted-foreground">No employee found with those digits.</p>
+          <p className="text-xs text-muted-foreground">No {labelLower} found with those digits.</p>
         )}
         {matches.map((u) => (
           <button

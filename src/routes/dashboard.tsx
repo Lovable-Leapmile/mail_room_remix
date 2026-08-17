@@ -378,9 +378,6 @@ function ApiPickupCard({ r }: { r: ApiPickup }) {
       <div className="ios-card p-3 flex gap-3">
         <StorageIcon type={isRobot ? "robot" : "locker"} className="w-10 h-10" imgClassName="w-8 h-8" />
         <div className="flex-1 min-w-0">
-          <p className="text-[11px] text-muted-foreground flex items-center gap-1 truncate">
-            <User className="w-3 h-3" /> Dropped by {r.created_by_name || "—"}
-          </p>
           <div className="mt-0.5">
             <p className="font-semibold text-sm truncate">{r.reservation_type}</p>
           </div>
