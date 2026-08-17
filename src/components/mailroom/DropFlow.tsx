@@ -40,7 +40,11 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
   const courierPhone = user?.regNo ?? "";
   const courierCompany = user?.org?.split("·")[0]?.trim() ?? "Courier";
   const { selected } = useUserLocations(courierPhone);
-  const { users, loading: loadingUsers } = useLocationUsers(selected?.location_id ?? null);
+  const isEmployeeFlow = title === "Send Parcel";
+  const userType = isEmployeeFlow ? "delivery" : "customer";
+  const userLabel = isEmployeeFlow ? "Courier" : "Employee";
+  const userLabelLower = isEmployeeFlow ? "courier" : "employee";
+  const { users, loading: loadingUsers } = useLocationUsers(selected?.location_id ?? null, userType);
 
   const [step, setStep] = useState<Step>("scan");
   const [pod, setPod] = useState<ScannedPod | null>(null);
@@ -187,7 +191,7 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
 
               <FieldButton
                 icon={<User className="w-4 h-4 text-primary shrink-0" />}
-                value={picked ? picked.user_name : loadingUsers ? "Loading employees…" : "Select Employee"}
+                value={picked ? picked.user_name : loadingUsers ? `Loading ${userLabelLower}s…` : `Select ${userLabel}`}
                 filled={!!picked}
                 onClick={() => setModal("user")}
               />
@@ -213,6 +217,8 @@ export function DropFlow({ title = "Drop Parcel" }: { title?: string }) {
                 <UserModal
                   users={users}
                   loading={loadingUsers}
+                  label={userLabel}
+                  labelLower={userLabelLower}
                   onClose={() => setModal(null)}
                   onPick={(u) => {
                     setPicked(u);
