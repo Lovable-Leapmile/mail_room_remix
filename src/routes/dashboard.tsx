@@ -4,7 +4,6 @@ import { ArrowUpRight, Sparkles, Truck, History as HistoryIcon, User, ClipboardL
 import { useMailroom, type Parcel } from "@/lib/mailroom";
 import { cn } from "@/lib/utils";
 import { Page, ProfileSheet } from "@/components/mailroom/AppShell";
-import { ParcelCard } from "@/components/mailroom/ParcelCard";
 import { OutgoingParcelCard } from "@/components/mailroom/OutgoingParcelCard";
 import { StorageIcon } from "@/components/mailroom/StorageIcon";
 import { DropParcelSheet } from "@/components/mailroom/DropParcelSheet";
@@ -192,20 +191,26 @@ function Dashboard() {
 
 function CourierDashboard() {
   const user = useMailroom((s) => s.user);
-  const parcels = useMailroom((s) => s.parcels);
-  const courierCompany = user?.org?.split("·")[0]?.trim() ?? "";
-  const courierPickups = parcels.filter(
-    (p) => p.direction === "outgoing" && p.status === "Ready for Pickup" && p.courier === courierCompany,
-  );
   const [openProfile, setOpenProfile] = useState(false);
   const [dropTarget, setDropTarget] = useState<Parcel | null>(null);
   const [showPickups, setShowPickups] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showDrops, setShowDrops] = useState(false);
 
+  const [apiPickupPickups, setApiPickupPickups] = useState<ApiPickup[]>([]);
   const { selectedId: dropLocationId } = useUserLocations(user?.regNo);
   const [apiDrops, setApiDrops] = useState<ApiPickup[]>([]);
   const refreshTick = useRefreshTick();
+
+  useEffect(() => {
+    if (!user?.regNo) return;
+    const url = `${PODCORE_BASE}/reservations/?reservation_status=PickupPending&pickupby_phone=${encodeURIComponent(user.regNo)}&order_by_field=updated_at&order_by_type=DESC`;
+    fetch(url, { headers: apiHeaders })
+      .then((r) => r.json())
+      .then((d) => setApiPickupPickups(Array.isArray(d?.records) ? d.records : []))
+      .catch(() => setApiPickupPickups([]));
+  }, [user?.regNo, refreshTick]);
+
   useEffect(() => {
     if (!user?.regNo || !dropLocationId) return;
     const url = `${PODCORE_BASE}/reservations/?location_id=${dropLocationId}&status=active&reservation_status=DropPending&dropby_phone=${encodeURIComponent(user.regNo)}&order_by_field=updated_at&order_by_type=DESC`;
@@ -253,29 +258,14 @@ function CourierDashboard() {
           <p className="text-sm font-semibold flex items-center gap-1.5">
             <Truck className="w-3.5 h-3.5 text-primary" /> Pickup Pending
           </p>
-          <span className="text-[11px] text-muted-foreground">{courierPickups.length}</span>
+          <span className="text-[11px] text-muted-foreground">{apiPickupPickups.length}</span>
         </button>
         {showPickups && (
-          <div className="mt-3">
-            {courierPickups.length === 0 ? (
-              <div className="ios-card p-6 text-center text-xs text-muted-foreground">No pickups waiting</div>
+          <div className="mt-3 space-y-3">
+            {apiPickupPickups.length === 0 ? (
+              <EmptySmall text="No pickups waiting" />
             ) : (
-              <div className="bg-white/60 rounded-2xl overflow-hidden shadow-[0_8px_24px_-12px_rgba(53,28,117,0.06)]">
-                {courierPickups.map((p, i) => (
-                  <div
-                    key={p.id}
-                    className={cn("p-0", i !== courierPickups.length - 1 && "border-b border-[oklch(0.94_0.012_285)]")}
-                  >
-                    <ParcelCard
-                      p={p}
-                      primary={p.sender}
-                      secondary={`${p.storageId} · ${p.trackingId}`}
-                      arrow="incoming"
-                      plain
-                    />
-                  </div>
-                ))}
-              </div>
+              apiPickupPickups.map((r) => <ApiPickupCard key={r.id} r={r} />)
             )}
           </div>
         )}
