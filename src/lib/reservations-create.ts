@@ -11,7 +11,10 @@ export interface LocationUser {
 
 export const RESERVATION_TYPES = ["Flipkart", "Amazon", "Myntra", "Snapdeal", "Meesho", "Nykaa"];
 
-export async function fetchLocationUsers(locationId: number): Promise<LocationUser[]> {
+export async function fetchLocationUsers(
+  locationId: number,
+  userType: string = "customer",
+): Promise<LocationUser[]> {
   const res = await fetch(
     `${PODCORE_BASE}/users/locations/?location_id=${locationId}&order_by_field=created_at&order_by_type=DESC`,
     { headers },
@@ -22,7 +25,7 @@ export async function fetchLocationUsers(locationId: number): Promise<LocationUs
   const seen = new Set<string>();
   const out: LocationUser[] = [];
   for (const r of rows) {
-    if (String(r.user_type).toLowerCase() !== "customer") continue;
+    if (String(r.user_type).toLowerCase() !== userType.toLowerCase()) continue;
     const phone = String(r.user_phone ?? "");
     if (!phone || seen.has(phone)) continue;
     seen.add(phone);
@@ -37,7 +40,10 @@ export async function fetchLocationUsers(locationId: number): Promise<LocationUs
   return out;
 }
 
-export function useLocationUsers(locationId: number | null | undefined) {
+export function useLocationUsers(
+  locationId: number | null | undefined,
+  userType: string = "customer",
+) {
   const [users, setUsers] = useState<LocationUser[]>([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -47,13 +53,13 @@ export function useLocationUsers(locationId: number | null | undefined) {
     }
     let cancel = false;
     setLoading(true);
-    fetchLocationUsers(locationId)
+    fetchLocationUsers(locationId, userType)
       .then((u) => !cancel && setUsers(u))
       .finally(() => !cancel && setLoading(false));
     return () => {
       cancel = true;
     };
-  }, [locationId]);
+  }, [locationId, userType]);
   return { users, loading };
 }
 
