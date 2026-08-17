@@ -6,6 +6,27 @@ import { toast } from "sonner";
 
 type Phase = "starting" | "retrieving" | "waiting-open" | "open" | "waiting-close" | "done";
 
+type RobotRun = {
+  tray: string | null;
+  retrieveStarted: boolean;
+  openStarted: boolean;
+  opened: boolean;
+};
+
+// The timeline remounts this component when it advances from Opening to Drop.
+// Keep robot side-effect state outside the component so that remount cannot
+// retrieve the same tray or patch the same door OPEN a second time.
+const robotRuns = new Map<string, RobotRun>();
+
+function getRobotRun(podId: number, doorNumber: number): RobotRun {
+  const key = `${podId}:${doorNumber}`;
+  const existing = robotRuns.get(key);
+  if (existing) return existing;
+  const run: RobotRun = { tray: null, retrieveStarted: false, openStarted: false, opened: false };
+  robotRuns.set(key, run);
+  return run;
+}
+
 /** Runs the locker / robot hardware sequence for an already-created reservation. */
 export function DropHardware({
   isRobot,
@@ -43,14 +64,26 @@ export function DropHardware({
         return;
       }
       if (isRobot) {
+        const run = getRobotRun(podId, doorNumber);
+        trayRef.current = run.tray;
+        if (run.opened) {
+          openedRef.current = true;
+          setPhase("open");
+          return;
+        }
         setPhase("retrieving");
+        if (run.retrieveStarted) return;
+        run.retrieveStarted = true;
         const tray = await fetchDoorState(podId, doorNumber);
         trayRef.current = tray;
+        run.tray = tray;
         if (!tray) {
+          run.retrieveStarted = false;
           toast.error("Could not read the drop tray for this pod.");
           return;
         }
-        await retrieveTray(tray);
+        const retrieved = await retrieveTray(tray);
+        if (!retrieved) run.retrieveStarted = false;
       } else {
         setPhase("waiting-open");
         try {
@@ -72,7 +105,9 @@ export function DropHardware({
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
     const poll = async () => {
-      const tray = trayRef.current;
+      const run = getRobotRun(podId, doorNumber);
+      const tray = trayRef.current ?? run.tray;
+      trayRef.current = tray;
       if (!tray) {
         timer = setTimeout(poll, 2000);
         return;
@@ -80,9 +115,14 @@ export function DropHardware({
       const ready = await isTrayReady(tray);
       if (cancelled) return;
       if (ready) {
-        if (openedRef.current) return;
+        if (openedRef.current || run.openStarted || run.opened) {
+          if (run.opened && !cancelled) setPhase("open");
+          return;
+        }
         openedRef.current = true;
+        run.openStarted = true;
         await patchDoorStatus(podId, doorNumber, "OPEN");
+        run.opened = true;
         setPhase("open");
         if (!onRetrievedCalledRef.current) {
           onRetrievedCalledRef.current = true;
@@ -167,6 +207,7 @@ export function DropHardware({
     if (podId && doorNumber) {
       if (trayRef.current) await releaseTray(trayRef.current);
       await patchDoorStatus(podId, doorNumber, "CLOSED");
+      if (isRobot) robotRuns.delete(`${podId}:${doorNumber}`);
     }
     setPhase("done");
     onDoneRef.current();
