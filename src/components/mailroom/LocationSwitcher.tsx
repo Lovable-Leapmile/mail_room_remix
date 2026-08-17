@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, MapPin, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserLocations, formatUserLocation } from "@/lib/user-locations";
+import { useHydrated } from "@/hooks/use-hydrated";
 
 export function LocationSwitcher({ phone, fallback = "" }: { phone?: string | null; fallback?: string }) {
   const { locations, selected, select } = useUserLocations(phone);
