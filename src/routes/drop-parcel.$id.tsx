@@ -434,7 +434,7 @@ function DropJourney({
           )}
           {step.key === "retrieving" && (
             <LoaderStage
-              title="Please wait, your drop tray is retrieving"
+              title="Please wait a minute, your drop tray is getting ready"
               desc="The Cube Robot is bringing the drop tray to the station."
             />
           )}
