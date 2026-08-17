@@ -5,6 +5,7 @@ import { useUserLocations, formatUserLocation } from "@/lib/user-locations";
 import { useHydrated } from "@/hooks/use-hydrated";
 
 export function LocationSwitcher({ phone, fallback = "" }: { phone?: string | null; fallback?: string }) {
+  const hydrated = useHydrated();
   const { locations, selected, select } = useUserLocations(phone);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -19,7 +20,7 @@ export function LocationSwitcher({ phone, fallback = "" }: { phone?: string | nu
   }, [open]);
 
   const label = formatUserLocation(selected) || fallback;
-  if (!label) return null;
+  if (!hydrated || !label) return null;
 
   return (
     <div className="relative" ref={ref}>
