@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useHydrated } from "@/hooks/use-hydrated";
 import { ArrowUpRight, Sparkles, Truck, History as HistoryIcon, User, ClipboardList } from "lucide-react";
 import { useMailroom, type Parcel } from "@/lib/mailroom";
 import { cn } from "@/lib/utils";
@@ -34,6 +35,7 @@ function Dashboard() {
   const user = useMailroom((s) => s.user);
   const parcels = useMailroom((s) => s.parcels);
   const isCourier = user?.role === "Courier";
+  const hydrated = useHydrated();
 
   const [apiPickups, setApiPickups] = useState<ApiPickup[]>([]);
   const refreshTick = useRefreshTick();
@@ -47,7 +49,7 @@ function Dashboard() {
       .catch(() => setApiPickups([]));
   }, [user?.regNo, isCourier, refreshTick]);
 
-  if (isCourier) return <CourierDashboard />;
+  if (hydrated && isCourier) return <CourierDashboard />;
 
   const toSend = parcels.filter((p) => p.direction === "outgoing" && p.status === "Ready for Pickup");
   const { items: historyItems, loading: historyLoading } = usePickupHistory(undefined, refreshTick);
