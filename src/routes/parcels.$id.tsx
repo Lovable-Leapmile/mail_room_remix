@@ -116,8 +116,25 @@ function ParcelDetail() {
 
   if (!parcel) {
     return (
-      <Page title="Parcel Pickup" back flatHeader>
-        <div className="py-20 text-center text-muted-foreground text-sm">
+      <Page hideNav>
+        <div className="-mx-4 -mt-4 sticky top-0 z-30 bg-[color:var(--glass)] border-b border-[color:var(--border)] backdrop-blur-xl">
+          <div className="relative flex items-center justify-center px-3 py-2.5">
+            <button
+              onClick={() => window.history.back()}
+              aria-label="Back"
+              className="haptic-tap absolute left-3 w-7 h-7 rounded-full bg-[color:var(--primary-soft)] flex items-center justify-center"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-primary" />
+            </button>
+            <img src={logoAsset.url} alt="Leapmile" className="h-6 w-auto object-contain" />
+          </div>
+        </div>
+
+        <div className="mt-4 flex items-center justify-between gap-3">
+          <h1 className="text-[22px] font-bold tracking-tight">Parcel Pickup</h1>
+        </div>
+
+        <div className="mt-4 py-20 text-center text-muted-foreground text-sm">
           {loading ? "Loading parcel…" : notFound ? "Parcel not found." : "Loading parcel…"}
         </div>
       </Page>
